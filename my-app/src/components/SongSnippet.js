@@ -5,9 +5,13 @@ const SongSnippet = () => {
     const [trackDetails, setTrackDetails] = useState(null);
     const [error, setError] = useState(null);
 
+    const handleLogin = () => {
+        window.location.href = 'http://localhost:8888/login'; // Redirect to your login endpoint
+    };
+
     const fetchSnippet = async () => {
         try {
-            const response = await fetch('http://localhost:3001/getTrackId');
+            const response = await fetch('http://localhost:8888/getTrackId');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -16,18 +20,15 @@ const SongSnippet = () => {
             setSong(data);
             setError(null); // Clear any previous error
 
-            const trackId = data.uri.split(':').pop(); // Get the last part of the URI
-            console.log('Track ID:', trackId);
-            
             // Fetch track details using the track ID
-            const trackResponse = await fetch(`http://localhost:3001/track/${trackId}`);
+            const trackId = data.uri.split(':').pop(); // Get the last part of the URI
+            const trackResponse = await fetch(`http://localhost:8888/track/${trackId}`);
             if (!trackResponse.ok) {
                 throw new Error('Network response was not ok');
             }
 
             const trackData = await trackResponse.json();
             setTrackDetails(trackData); // Store the track details
-            console.log(trackDetails.preview_url);
         } catch (err) {
             console.error('Error fetching the snippet or track details:', err);
             setError('Error fetching the song snippet or track details.');
@@ -39,13 +40,14 @@ const SongSnippet = () => {
     return (
         <div>
             <h1>Taylor Swift Song Snippet</h1>
-            <button onClick={fetchSnippet}>Get Song Snippet</button>
+            <button onClick={handleLogin}>Login to Spotify</button>
+            <button onClick={fetchSnippet} disabled={!song}>Get Song Snippet</button>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             {song && (
                 <div>
                     <h2>{song.title} by {song.artist}</h2>
                     <audio controls>
-                        <source src={trackDetails.preview_url} type="audio/mpeg" />
+                        <source src={song.preview_url} type="audio/mpeg" />
                         Your browser does not support the audio tag.
                     </audio>
                 </div>
@@ -54,7 +56,6 @@ const SongSnippet = () => {
                 <div>
                     <h3>Track Details</h3>
                     <p>Album: {trackDetails.album}</p>
-                    {/* Add more track details as needed */}
                 </div>
             )}
         </div>

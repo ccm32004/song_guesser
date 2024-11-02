@@ -1,11 +1,18 @@
 import React from 'react';
-import SongSnippet from './components/SongSnippet';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+
 
 const App = () => {
     return (
-        <div className="App">
-            <SongSnippet />
-        </div>
+    <Router>
+        <Routes>
+            <Route path="/login" element={<Login/>} />
+            <Route path="/dashboard" element={<Dashboard/>} />
+            <Route path="/" element = {<Login/>} />
+        </Routes>
+    </Router>
     );
 };
 

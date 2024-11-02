@@ -1,38 +1,133 @@
-const express = require('express');
-const cors = require('cors');
-const axios = require('axios');
 require('dotenv').config();
+const express = require('express');
+const request = require('request');
+const crypto = require('crypto');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const cors = require('cors');
+const axios = require('axios'); 
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const client_id = process.env.SPOTIFY_CLIENT_ID; // Your client ID
+const client_secret = process.env.SPOTIFY_CLIENT_SECRET; // Your client secret
+const redirect_uri = process.env.SPOTIFY_REDIRECT_URI; 
 
-app.use(cors());
+app.use(express.static(__dirname + '/public'))
+   .use(cookieParser())
+   .use(cors())
+   .use(session({
+       secret: 'your-secret-key', // Use a strong secret in production
+       resave: false,
+       saveUninitialized: true,
+       cookie: { secure: false } // Set secure: true in production with HTTPS
+   }));
 
-//cache the token later so u dont have to req everytime
+app.get('/login', (req, res) => {
+    const state = generateRandomString(16);
+    res.cookie('spotify_auth_state', state);
+  
+    const scope = 'user-read-private user-read-email';
+    console.log("redirecting to spotify login");
 
-// Function to get Spotify access token
-async function getAccessToken() {
-    const tokenUrl = 'https://accounts.spotify.com/api/token';
-    const response = await axios.post(tokenUrl, new URLSearchParams({
-        grant_type: 'client_credentials',
-    }), {
-        headers: {
-            'Authorization': `Basic ${Buffer.from(`${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`).toString('base64')}`,
-            'Content-Type': 'application/x-www-form-urlencoded',
+    res.redirect('https://accounts.spotify.com/authorize?' +
+      new URLSearchParams({
+        response_type: 'code',
+        client_id,
+        scope,
+        redirect_uri,
+        state
+    }));
+});
+
+app.get('/callback', (req, res) => {
+    const code = req.query.code || null;
+    const state = req.query.state || null;
+    const storedState = req.cookies ? req.cookies['spotify_auth_state'] : null;
+
+    console.log("callback");
+  
+    if (state === null || state !== storedState) {
+      res.redirect('/#' +
+        new URLSearchParams({ error: 'state_mismatch' }));
+    } else {
+      res.clearCookie('spotify_auth_state');
+  
+      const authOptions = {
+        url: 'https://accounts.spotify.com/api/token',
+        form: {
+          code,
+          redirect_uri,
+          grant_type: 'authorization_code'
         },
-    });
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded',
+          Authorization: 'Basic ' + Buffer.from(`${client_id}:${client_secret}`).toString('base64')
+        },
+        json: true
+      };
+  
+      request.post(authOptions, (error, response, body) => {
+        if (!error && response.statusCode === 200) {
+          const access_token = body.access_token;
+          const refresh_token = body.refresh_token;
+  
+          // Store tokens in session
+          req.session.access_token = access_token;
+          req.session.refresh_token = refresh_token;
 
-    return response.data.access_token;
-}
+          res.redirect(`http://localhost:3000/dashboard?access_token=${access_token}`);
+
+  
+          // Redirect or respond with tokens
+        //   res.redirect('/#' +
+        //     new URLSearchParams({ access_token, refresh_token }));
+        } else {
+          res.redirect('http://localhost:3000/?error=authentication_failed');
+        //   res.redirect('/#' +
+        //     new URLSearchParams({ error: 'invalid_token' }));
+        }
+      });
+    }
+  });
+
+// Refresh token endpoint
+app.get('/refresh_token', (req, res) => {
+    const refresh_token = req.session.refresh_token;
+  
+    const authOptions = {
+      url: 'https://accounts.spotify.com/api/token',
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Basic ' + Buffer.from(`${client_id}:${client_secret}`).toString('base64')
+      },
+      form: {
+        grant_type: 'refresh_token',
+        refresh_token
+      },
+      json: true
+    };
+  
+    request.post(authOptions, (error, response, body) => {
+      if (!error && response.statusCode === 200) {
+        const access_token = body.access_token;
+        res.send({ access_token });
+      } else {
+        res.status(response.statusCode).send({ error: 'Failed to refresh token' });
+      }
+    });
+});
 
 //move routes to a separate file later???
 // Route to get a Taylor Swift song snippet
 app.get('/getTrackId', async (req, res) => {
     try {
-        const accessToken = await getAccessToken();
+        const access_token = req.session.access_token;
+        console.log("GETTING TOKEN")
+        console.log(access_token);
         const searchResponse = await axios.get('https://api.spotify.com/v1/search', {
             headers: {
-                Authorization: `Bearer ${accessToken}`,
+                Authorization: `Bearer ${access_token}`,
             },
             params: {
                 q: 'Taylor Swift',
@@ -46,6 +141,7 @@ app.get('/getTrackId', async (req, res) => {
         if (song) {
             console.log("found song")
             const snippetUrl = song.preview_url; // URL for the song snippet
+            console.log("GETTING SNIPPET FROM GET TRACK ID API")
             console.log(snippetUrl);
             res.json({
                 title: song.name,
@@ -62,39 +158,39 @@ app.get('/getTrackId', async (req, res) => {
     }
 });
 
-app.get('/track/:id', async (req, res) => {
-    const trackId = req.params.id; // Get the track ID from the URL
+// app.get('/track/:id', async (req, res) => {
+//     const trackId = req.params.id; // Get the track ID from the URL
 
-    try {
-        console.log("getting track preview url");
-        const accessToken = await getAccessToken();
-        const response = await axios.get(`https://api.spotify.com/v1/tracks/${trackId}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-            },
-            params: {
-                market: 'CA'
-            },
-        });
+//     try {
+//         console.log("getting track preview url");
+//         const access_token = req.session.access_token;
+//         const response = await axios.get(`https://api.spotify.com/v1/tracks/${trackId}`, {
+//             headers: {
+//                 Authorization: `Bearer ${access_token}`,
+//             },
+//             params: {
+//                 market: 'CA'
+//             },
+//         });
 
-        // Check if track data is returned
-        if (response.data) {
-            const track = response.data;
-            console.log(track);
-            res.json({
-                title: track.name,
-                artist: track.artists.map(artist => artist.name).join(', '),
-                preview_url: track.preview_url, // The URL for the track's preview
-                album: track.album.name,
-            });
-        } else {
-            res.status(404).json({ error: 'Track not found' });
-        }
-    } catch (err) {
-        console.error('Error fetching track details:', err);
-        res.status(500).send('Error fetching track details');
-    }
-});
+//         // Check if track data is returned
+//         if (response.data) {
+//             const track = response.data;
+//             console.log(track);
+//             res.json({
+//                 title: track.name,
+//                 artist: track.artists.map(artist => artist.name).join(', '),
+//                 preview_url: track.preview_url, // The URL for the track's preview
+//                 album: track.album.name,
+//             });
+//         } else {
+//             res.status(404).json({ error: 'Track not found' });
+//         }
+//     } catch (err) {
+//         console.error('Error fetching track details:', err);
+//         res.status(500).send('Error fetching track details');
+//     }
+// });
 
 // Start the server
 app.listen(PORT, () => {
@@ -102,3 +198,12 @@ app.listen(PORT, () => {
 });
 
 //basucally the cook is to authorization code flow bc client credentials don't work for preview URLS
+
+function generateRandomString(length) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+}
