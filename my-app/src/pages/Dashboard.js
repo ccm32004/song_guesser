@@ -1,41 +1,65 @@
 // Dashboard.js
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 const Dashboard = () => {
     const [song, setSong] = useState(null);
-    const [trackDetails, setTrackDetails] = useState(null);
     const [error, setError] = useState(null);
+    const [inputTitle, setInputTitle] = useState('');
+    const [validationMessage, setValidationMessage] = useState('');
+    const audioRef = useRef(null);
 
     const fetchSnippet = async () => {
         try {
-            // const response = await fetch('http://localhost:8888/getTrackId', {
-            //     credentials: 'include', // Include cookies
-            // });
-            // if (!response.ok) {
-            //     throw new Error('Network response was not ok');
-            // }
-
-            // const data = await response.json();
-            // setSong(data);
-            // setError(null); // Clear any previous error
-
-            // Fetch track details using the track ID
-            const trackId = '1BxfuPKGuaTgP7aM0Bbdwr' //'6rPO02ozF3bM7NnOV4h6s2' //data.uri.split(':').pop(); // Get the last part of the URI
-            console.log(trackId);
-            const trackResponse = await fetch(`http://localhost:8888/track/${trackId}`, {
+            const response = await fetch('http://localhost:8888/getTrackId', {
                 credentials: 'include', // Include cookies
             });
-            if (!trackResponse.ok) {
+            if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
 
-            const trackData = await trackResponse.json();
-            setTrackDetails(trackData); // Store the track details
+            const data = await response.json();
+            setSong(data);
+            setError(null); // Clear any previous error
+
         } catch (err) {
             console.error('Error fetching the snippet or track details:', err);
             setError('Error fetching the song snippet or track details.');
             setSong(null); // Clear any previous song data
-            setTrackDetails(null); // Clear previous track details
+        }
+    };
+
+    const playRandomSnippet = () => {
+        if (audioRef.current){
+            const audio =audioRef.current;
+            const duration = audio.duration;
+            const maxStartTime = duration - 1; //ensures there is enough time for 3 second snippet : ALSO: TODO, allow customization of preview time frame
+            const startTime = Math.random() * maxStartTime;
+
+            audio.currentTime = startTime;
+            audio.play();
+
+            setTimeout(() => {
+                audio.pause();
+            }, 1000); // Stop playback after 3 seconds
+
+        }
+
+    };
+
+    const handleInputChange = (e) => {
+        console.log(e.target.value);
+    };
+
+    const validateTitle = () => {
+        const normalizedSongTitle = song.title.toLowerCase().replace(/\s+/g, '');
+        const normalizedInputTitle = inputTitle.toLowerCase().replace(/\s+/g, '');
+        console.log('Song title:', normalizedSongTitle);
+        console.log('Input title:', normalizedInputTitle);
+
+        if (normalizedInputTitle === normalizedSongTitle) {
+            setValidationMessage('Correct!');
+        }else{
+            setValidationMessage('Incorrect. Try again!');
         }
     };
 
@@ -46,19 +70,30 @@ const Dashboard = () => {
             {error && <p style={{ color: 'red' }}>{error}</p>}
             {song && (
                 <div>
+                     {console.log('Rendering song:', song)} {/* Log the song details */}
                     <h2>{song.title} by {song.artist}</h2>
-                    <audio controls>
+                    <audio 
+                        key={song.uri} 
+                        ref={audioRef}
+                        controls
+                        onLoadedMetadata={playRandomSnippet}>
+
                         <source src={song.preview_url} type="audio/mpeg" />
                         Your browser does not support the audio tag.
                     </audio>
+
+                    <div>
+                        <input
+                            type="text"
+                            value={inputTitle}
+                            onChange={(e) => setInputTitle(e.target.value)}
+                            placeholder="Enter the song title"
+                        />
+                        <button onClick={validateTitle}>Check Answer</button>
+                        <p>{validationMessage}</p>
+                    </div>
                 </div>
             )}
-            {/* {trackDetails && (
-                <div>
-                    <h3>Track Details</h3>
-                    <p>Album: {trackDetails.album}</p>
-                </div>
-            )} */}
         </div>
     );
 };

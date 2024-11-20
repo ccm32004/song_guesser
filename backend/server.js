@@ -6,17 +6,24 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const cors = require('cors');
 const axios = require('axios'); 
-const { access } = require('fs');
+
+const fs = require('fs');
+const path = require('path');
+
+const taylorSwiftSongs = JSON.parse(fs.readFileSync(path.resolve(__dirname, 'songs.json'), 'utf8'));
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const client_id = process.env.SPOTIFY_CLIENT_ID; // Your client ID
-const client_secret = process.env.SPOTIFY_CLIENT_SECRET; // Your client secret
+const client_id = process.env.SPOTIFY_CLIENT_ID; 
+const client_secret = process.env.SPOTIFY_CLIENT_SECRET; 
 const redirect_uri = process.env.SPOTIFY_REDIRECT_URI; 
 
 app.use(express.static(__dirname + '/public'))
    .use(cookieParser())
-   .use(cors())
+   .use(cors({
+      origin: 'http://localhost:3000', // TODO: put this as an env variable
+      credentials: true 
+  }))
    .use(session({
        secret: 'your-secret-key', // Use a strong secret in production
        resave: false,
@@ -137,12 +144,24 @@ app.get('/getTrackId', async (req, res) => {
         const access_token = req.session.access_token;
         console.log("GETTING TOKEN")
         console.log(access_token);
+
+        //select a song from the list of songs
+        const randomSongTitle = taylorSwiftSongs[Math.floor(Math.random() * taylorSwiftSongs.length)];
+        console.log("RANDOM SONG TITLE ", randomSongTitle);
+
+        const artist = req.query.artist || 'Taylor Swift';
+        const title = randomSongTitle || '';
+
+        const query = `${title} artist:${artist}`.trim();
+        console.log("Search query:", query);
+
+
         const searchResponse = await axios.get('https://api.spotify.com/v1/search', {
             headers: {
                 Authorization: `Bearer ${access_token}`,
             },
             params: {
-                q: 'Taylor Swift', // Search for Taylor Swift
+                q: query,
                 type: 'track',
                 limit: 1, // Get one song
                 market: 'CA'
@@ -168,43 +187,6 @@ app.get('/getTrackId', async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).send('Error fetching song snippet');
-    }
-});
-
-app.get('/track/:id', async (req, res) => {
-    const trackId = req.params.id; // Get the track ID from the URL
-    console.log(trackId);
-
-    try {
-        console.log("getting track preview url");
-        const access_token = req.session.access_token;
-        console.log(access_token);
-        const response = await axios.get(`https://api.spotify.com/v1/tracks/${trackId}`, {
-            headers: {
-                Authorization: `Bearer ${access_token}`,
-            },
-            params: {
-                market: 'CA'
-            },
-        });
-
-        // Check if track data is returned
-        if (response.data) {
-            const track = response.data;
-            console.log("TRYING SECOND API CALL")
-            console.log(track);
-            res.json({
-                title: track.name,
-                artist: track.artists.map(artist => artist.name).join(', '),
-                preview_url: track.preview_url, // The URL for the track's preview
-                album: track.album.name,
-            });
-        } else {
-            res.status(404).json({ error: 'Track not found' });
-        }
-    } catch (err) {
-        console.error('Error fetching track details:', err);
-        res.status(500).send('Error fetching track details');
     }
 });
 
