@@ -8,24 +8,29 @@ const Dashboard = () => {
 
     const fetchSnippet = async () => {
         try {
-            const response = await fetch('http://localhost:8888/getTrackId');
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            const data = await response.json();
-            setSong(data);
-            setError(null); // Clear any previous error
-
-            // Fetch track details using the track ID
-            // const trackId = data.uri.split(':').pop(); // Get the last part of the URI
-            // const trackResponse = await fetch(`http://localhost:8888/track/${trackId}`);
-            // if (!trackResponse.ok) {
+            // const response = await fetch('http://localhost:8888/getTrackId', {
+            //     credentials: 'include', // Include cookies
+            // });
+            // if (!response.ok) {
             //     throw new Error('Network response was not ok');
             // }
 
-            // const trackData = await trackResponse.json();
-            // setTrackDetails(trackData); // Store the track details
+            // const data = await response.json();
+            // setSong(data);
+            // setError(null); // Clear any previous error
+
+            // Fetch track details using the track ID
+            const trackId = '1BxfuPKGuaTgP7aM0Bbdwr' //'6rPO02ozF3bM7NnOV4h6s2' //data.uri.split(':').pop(); // Get the last part of the URI
+            console.log(trackId);
+            const trackResponse = await fetch(`http://localhost:8888/track/${trackId}`, {
+                credentials: 'include', // Include cookies
+            });
+            if (!trackResponse.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const trackData = await trackResponse.json();
+            setTrackDetails(trackData); // Store the track details
         } catch (err) {
             console.error('Error fetching the snippet or track details:', err);
             setError('Error fetching the song snippet or track details.');

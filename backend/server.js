@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const cors = require('cors');
 const axios = require('axios'); 
+const { access } = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -76,7 +77,18 @@ app.get('/callback', (req, res) => {
           req.session.access_token = access_token;
           req.session.refresh_token = refresh_token;
 
-          res.redirect(`http://localhost:3000/dashboard?access_token=${access_token}`);
+           // Save session
+          req.session.save((err) => {
+            if (err) {
+              console.error('Failed to save session:', err);
+              res.redirect('http://localhost:3000/?error=session_save_failed');
+            } else {
+              //check if the session contains the token info
+              console.log("SESSION INFO");
+              console.log('Session saved:', req.session);
+              res.redirect(`http://localhost:3000/dashboard?access_token=${access_token}`);
+            }
+          });
 
   
           // Redirect or respond with tokens
@@ -130,7 +142,7 @@ app.get('/getTrackId', async (req, res) => {
                 Authorization: `Bearer ${access_token}`,
             },
             params: {
-                q: 'Taylor Swift',
+                q: 'Taylor Swift', // Search for Taylor Swift
                 type: 'track',
                 limit: 1, // Get one song
                 market: 'CA'
@@ -140,6 +152,7 @@ app.get('/getTrackId', async (req, res) => {
         const song = searchResponse.data.tracks.items[0];
         if (song) {
             console.log("found song")
+            console.log("Song details:", song); // Log all song details
             const snippetUrl = song.preview_url; // URL for the song snippet
             console.log("GETTING SNIPPET FROM GET TRACK ID API")
             console.log(snippetUrl);
@@ -158,39 +171,42 @@ app.get('/getTrackId', async (req, res) => {
     }
 });
 
-// app.get('/track/:id', async (req, res) => {
-//     const trackId = req.params.id; // Get the track ID from the URL
+app.get('/track/:id', async (req, res) => {
+    const trackId = req.params.id; // Get the track ID from the URL
+    console.log(trackId);
 
-//     try {
-//         console.log("getting track preview url");
-//         const access_token = req.session.access_token;
-//         const response = await axios.get(`https://api.spotify.com/v1/tracks/${trackId}`, {
-//             headers: {
-//                 Authorization: `Bearer ${access_token}`,
-//             },
-//             params: {
-//                 market: 'CA'
-//             },
-//         });
+    try {
+        console.log("getting track preview url");
+        const access_token = req.session.access_token;
+        console.log(access_token);
+        const response = await axios.get(`https://api.spotify.com/v1/tracks/${trackId}`, {
+            headers: {
+                Authorization: `Bearer ${access_token}`,
+            },
+            params: {
+                market: 'CA'
+            },
+        });
 
-//         // Check if track data is returned
-//         if (response.data) {
-//             const track = response.data;
-//             console.log(track);
-//             res.json({
-//                 title: track.name,
-//                 artist: track.artists.map(artist => artist.name).join(', '),
-//                 preview_url: track.preview_url, // The URL for the track's preview
-//                 album: track.album.name,
-//             });
-//         } else {
-//             res.status(404).json({ error: 'Track not found' });
-//         }
-//     } catch (err) {
-//         console.error('Error fetching track details:', err);
-//         res.status(500).send('Error fetching track details');
-//     }
-// });
+        // Check if track data is returned
+        if (response.data) {
+            const track = response.data;
+            console.log("TRYING SECOND API CALL")
+            console.log(track);
+            res.json({
+                title: track.name,
+                artist: track.artists.map(artist => artist.name).join(', '),
+                preview_url: track.preview_url, // The URL for the track's preview
+                album: track.album.name,
+            });
+        } else {
+            res.status(404).json({ error: 'Track not found' });
+        }
+    } catch (err) {
+        console.error('Error fetching track details:', err);
+        res.status(500).send('Error fetching track details');
+    }
+});
 
 // Start the server
 app.listen(PORT, () => {
