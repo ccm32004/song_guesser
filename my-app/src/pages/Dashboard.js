@@ -1,5 +1,6 @@
 // Dashboard.js
 import React, { useRef, useState } from 'react';
+import { Button } from '@mantine/core';
 
 const Dashboard = () => {
     const [song, setSong] = useState(null);
@@ -66,7 +67,7 @@ const Dashboard = () => {
     return (
         <div>
             <h1>Taylor Swift Song Snippet</h1>
-            <button onClick={fetchSnippet}>Get Song Snippet</button>
+            <Button onClick={fetchSnippet}>Get Song Snippet</Button>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             {song && (
                 <div>

@@ -1,17 +1,26 @@
 // Login.js
 import React from 'react';
+import { Button, CloseButton, Container, Title } from '@mantine/core';
+import { HeaderSimple } from '../components/Header';
 
 const Login = () => {
-    const handleLogin = () => {
-        window.location.href = 'http://localhost:8888/login'; // Redirect to your login endpoint
-    };
+  const handleLogin = () => {
+    window.location.href = 'http://localhost:8888/login'; // Redirect to your login endpoint
+  };
 
-    return (
-        <div>
-            <h1>Login to Spotify</h1>
-            <button onClick={handleLogin}>Login with Spotify</button>
-        </div>
-    );
+  return (
+    <Container size="xs" style={{ textAlign: 'center', marginTop: '50px' }}>
+      {/* <HeaderSimple /> */}
+      <Title order={1}>Login to Spotify</Title>
+      <Button 
+        variant="filled" 
+        color="violet"
+        onClick={handleLogin} 
+        style={{ marginTop: '20px' }}>
+        Login with Spotify
+      </Button>
+    </Container>
+  );
 };
 
 export default Login;
