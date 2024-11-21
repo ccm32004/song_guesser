@@ -47,6 +47,8 @@ const Dashboard = () => {
 
     };
 
+    //TODO, make it so that u press play three times on the same track before it regens!
+
     const handleInputChange = (e) => {
         console.log(e.target.value);
     };
@@ -89,6 +91,7 @@ const Dashboard = () => {
                             value={inputTitle}
                             onChange={(e) => setInputTitle(e.target.value)}
                             placeholder="Enter the song title"
+
                         />
                         <button onClick={validateTitle}>Check Answer</button>
                         <p>{validationMessage}</p>

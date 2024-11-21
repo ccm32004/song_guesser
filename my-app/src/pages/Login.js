@@ -10,7 +10,6 @@ const Login = () => {
 
   return (
     <Container size="xs" style={{ textAlign: 'center', marginTop: '50px' }}>
-      {/* <HeaderSimple /> */}
       <Title order={1}>Login to Spotify</Title>
       <Button 
         variant="filled" 
