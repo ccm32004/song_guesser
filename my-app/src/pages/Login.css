@@ -1,0 +1,18 @@
+.login-container {
+    background-image: url('/purple2.png'); /* Adjust the path if needed */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .login-content {
+    /* background-color: rgba(0, 0, 0, 0.5); Optional: Add a semi-transparent background for better readability */
+    padding: 20px;
+    border-radius: 10px;
+  }
