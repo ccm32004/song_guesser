@@ -7,6 +7,11 @@ const session = require('express-session');
 const cors = require('cors');
 const axios = require('axios'); 
 
+//stuff to get the new preview url 
+const cheerio = require('cheerio');
+const jsonpath = require('jsonpath');
+
+
 const fs = require('fs');
 const path = require('path');
 
@@ -204,4 +209,73 @@ function generateRandomString(length) {
         result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     return result;
+}
+
+
+//this is the workaround to get the song preview URL
+app.get('/track/:trackId', async (req, res) => {
+  const trackId = req.params.trackId;
+  const previewUrl = await fetchPreviewUrl(trackId);
+  // const previewUrl = await fetchPreviewUrl("3CeCwYWvdfXbZLXFhBrbnf");
+
+  if (previewUrl) {
+      res.json({ previewUrl });
+  } else {
+      res.status(500).json({ error: 'Failed to fetch audio preview URL' });
+  }
+});
+
+async function fetchPreviewUrl(trackId) {
+  const embedUrl = `https://open.spotify.com/embed/track/${trackId}`;
+
+  try {
+      // Make the request to the Spotify embed page
+      const response = await axios.get(embedUrl);
+
+      if (response.status !== 200) {
+          console.log(`Failed to fetch embed page: ${response.status}`);
+          return null;
+      }
+
+      const html = response.data;
+      const $ = cheerio.load(html); // Load HTML using cheerio
+      const scriptElements = $('script');
+
+      // Loop through script elements to find the relevant JSON data
+      for (let i = 0; i < scriptElements.length; i++) {
+          const scriptContent = $(scriptElements[i]).html();
+
+          if (scriptContent) {
+              // Try to find the audioPreview URL using JSONPath
+              const previewUrl = findNodeValueWithJsonPath(scriptContent, 'audioPreview');
+              if (previewUrl) {
+                  console.log('Found preview URL:', previewUrl);
+                  return previewUrl;
+              }
+          }
+      }
+  } catch (error) {
+      console.log('Error fetching or parsing the page:', error.message);
+      return null;
+  }
+  return null;
+}
+
+function findNodeValueWithJsonPath(jsonString, targetNode) {
+  try {
+      // Construct the JsonPath query
+      const query = `$..${targetNode}.url`;
+      console.log(`Using JsonPath Query: ${query}`); // Debug query
+
+      // Perform the query using jsonpath
+      const result = jsonpath.query(JSON.parse(jsonString), query);
+
+      // Return the first result if available
+      if (result.length > 0) {
+          return result[0]; // Return the first match
+      }
+  } catch (error) {
+      console.log('Error parsing JSON or applying JSONPath:', error.message);
+  }
+  return null;
 }

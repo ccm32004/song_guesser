@@ -1,9 +1,10 @@
 // Dashboard.js
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Button } from '@mantine/core';
 
 const Dashboard = () => {
     const [song, setSong] = useState(null);
+    const [songPreviewUrl, setSongPreviewUrl] = useState(null);
     const [error, setError] = useState(null);
     const [inputTitle, setInputTitle] = useState('');
     const [validationMessage, setValidationMessage] = useState('');
@@ -21,6 +22,20 @@ const Dashboard = () => {
             const data = await response.json();
             setSong(data);
             setError(null); // Clear any previous error
+
+            //testing the new workaround 
+            const trackId = data.uri.split(':').pop(); // Get the last part of the URI
+            const trackResponse = await fetch(`http://localhost:8888/track/${trackId}`);
+
+            if (!trackResponse.ok) {
+                throw new Error('Network response was not ok');
+            }
+            else{
+                const data = await trackResponse.json();
+                const previewUrl = data.previewUrl;
+                console.log('Preview URL:', previewUrl);
+                setSongPreviewUrl(previewUrl);
+            }
 
         } catch (err) {
             console.error('Error fetching the snippet or track details:', err);
@@ -44,6 +59,9 @@ const Dashboard = () => {
             }, 1000); // Stop playback after 3 seconds
 
         }
+        else{
+            console.error('Audio ref not found');
+        }
 
     };
 
@@ -66,6 +84,12 @@ const Dashboard = () => {
         }
     };
 
+    useEffect(() => {
+        if (audioRef.current && songPreviewUrl) {
+            audioRef.current.load(); // Reload the audio element when the URL changes
+        }
+    }, [songPreviewUrl]);
+
     return (
         <div>
             <h1>Taylor Swift Song Snippet</h1>
@@ -81,7 +105,8 @@ const Dashboard = () => {
                         controls
                         onLoadedMetadata={playRandomSnippet}>
 
-                        <source src={song.preview_url} type="audio/mpeg" />
+                        {console.log("rendering url", songPreviewUrl)}
+                        <source src={songPreviewUrl} type="audio/mpeg" />
                         Your browser does not support the audio tag.
                     </audio>
 
