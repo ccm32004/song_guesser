@@ -39,7 +39,7 @@ export function HeaderSimple() {
     <header className="header">
       <Container size="md" className="inner">
         {/* Left Side: App Name */}
-        <div>TSHeardle</div>
+        <div>Heardle</div>
 
         {/* Center: Navigation Links */}
         <Group spacing={5} className="links">

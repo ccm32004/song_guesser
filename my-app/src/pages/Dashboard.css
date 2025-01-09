@@ -1,0 +1,13 @@
+.dashboard-container {
+    background-image: url('/purple2.png'); /* Adjust the path if needed */
+    background-size: 100% 300%; /* Scale the background to twice its height */
+    background-position: top; /* Position the background at the top */
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+}
