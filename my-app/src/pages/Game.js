@@ -1,8 +1,10 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { RingProgress, Center, ActionIcon, Autocomplete, Button } from '@mantine/core';
-import { IconPlayerPlay } from '@tabler/icons-react'; // Play Icon
+import { RingProgress, Center, ActionIcon, Autocomplete, Button, Card } from '@mantine/core';
+import { IconPlayerPlayFilled,  IconPlayerSkipForward, IconBrandDeezer, IconFlameFilled, IconArrowNarrowLeft } from '@tabler/icons-react'; // Play Icon
 import { fetchSnippet } from '../utils/api'; // Import the fetchSnippet function
+import { HeaderSimple } from '../components/Header';
+import './Game.css'; // Import the CSS file
 
 const Game = () => {
     const location = useLocation();
@@ -92,11 +94,37 @@ const Game = () => {
         }
     };
 
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        validateTitle();
+    };
+
     return (
         <div className="game-container">
+            <HeaderSimple className="header" />
+            <div className="mode-header">
+                <IconArrowNarrowLeft size={24} />
+                <h2>Taylor Swift Mode</h2>
+            </div>
+            <Card shadow="sm" padding = "0" radius = "md" className="game-card">
             {song && (
-                <div>
-                    <h2>{song.title} by {song.artist}</h2>
+            <div className='card-content'>
+              <div className="left-column">
+            <div className = "left-content">
+              <div className="stat">
+                <IconBrandDeezer size={24} />
+                <h2>3</h2>
+              </div>
+              <div> <h4>Plays Left For Current Song</h4> </div>
+              <div className="stat">
+                <IconFlameFilled size={24} /> 
+                <h2>0</h2>
+              </div>
+              <div><h4>Current Streak Count</h4></div>
+            </div>
+              </div>
+                <div className = "right-column">
+                    {/* <h2>{song.title} by {song.artist}</h2> */}
                     <audio 
                         key={song.uri} 
                         ref={audioRef}
@@ -112,34 +140,55 @@ const Game = () => {
                             <RingProgress
                                 size={120}
                                 thickness={8}
-                                sections={[{ value: progress, color: 'blue' }]}
+                                rootColor='#a19aa7'
+                                sections={[{ value: progress, color: '#73687b' }]}
                             />
                             <ActionIcon
-                                size="xl"
-                                color="blue"
+                                size={60}
+                                color="violet"
                                 variant="filled"
-                                style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
+                                style={{ backgroundColor: '#5b4f65', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', borderRadius: '50%'}}
                                 onClick={isPlaying ? stopSnippet : playSnippet}
                             >
-                                <IconPlayerPlay size={24} />
+                                <IconPlayerPlayFilled size={24} style={{ color: 'e8e6e9'}}/>
                             </ActionIcon>
                         </div>
                     </Center>
 
-                    <div>
+                    <form onSubmit={handleSubmit} style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
                         <Autocomplete
                             value={inputTitle}
                             onChange={setInputTitle}
+                            variant = "filled"
                             placeholder="Enter the song title"
+                            width='100%'
                             data={[]} // You can provide a list of suggestions here
+                            styles={{
+                                input: {
+                                    backgroundColor: '#5b4f65',
+                                    border: '1px solid  white',
+                                    color: 'white',
+                                    padding: '0 3em',
+                                    textAlign: 'center',
+                                }
+                            }}     
                         />
-                        <button onClick={validateTitle}>Check Answer</button>
-                        <p>{validationMessage}</p>
-                    </div>
-                    <Button onClick={handleFetchSnippet}>Next</Button>
+                    </form>
+                    <p style={{ color: 'white' }}>{validationMessage}</p>
+                    <Button 
+                        onClick={handleFetchSnippet}
+                        variant="outline"
+                        color="gray"
+                        style={{ backgroundColor: 'transparent', borderColor: '#5b4f65', color: 'white' }}
+                    >
+                        <IconPlayerSkipForward size={16} style={{ marginRight: 8,}} />
+                        Skip
+                    </Button>
                     {error && <p style={{ color: 'red' }}>{error}</p>}
                 </div>
+                </div>
             )}
+            </Card>
         </div>
     );
 };

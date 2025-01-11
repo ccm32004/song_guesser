@@ -9,19 +9,32 @@ const Login = () => {
     window.location.href = 'http://localhost:8888/login'; // TODO: put this in an env. 
   };
 
+  const handlePlayWithoutLogin = () => {
+    // Handle the action for playing without logging in
+    console.log('Play without logging in');
+  };
+
   return (
     <div className="login-container">
       <HeaderSimple className = "header"/>
       <Container size="xs" className="login-content">
-        <Title order={1} style={{ color: 'white' }}>Login to Spotify</Title>
-        <Button
-          variant="filled"
-          color= "#8933D4"
-          onClick={handleLogin}
-          style={{ marginTop: '20px' }} //TODO: put this in a css file
-        >
-          Login with Spotify
-        </Button>
+        <Title>Welcome</Title>
+        <p> Press button below to begin!</p>
+        <div className="button-group">
+          <Button
+            onClick={handleLogin}
+            className="login-button"
+          >
+            Login with Spotify
+          </Button>
+          <Button
+            onClick={handlePlayWithoutLogin}
+            className="play-button"
+          >
+            Play w/o Login
+          </Button>
+        </div>
+        
       </Container>
     </div>
   );

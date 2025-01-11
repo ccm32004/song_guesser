@@ -27,3 +27,6 @@ export const fetchSnippet = async () => {
         throw new Error('Error fetching the song snippet or track details.');
     }
 }; 
+
+
+//also make an api to retrieve all the song titles for autocomplete

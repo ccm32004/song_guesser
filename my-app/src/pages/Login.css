@@ -1,6 +1,7 @@
 .login-container {
     background-image: url('/purple2.png'); /* Adjust the path if needed */
-    background-size: cover;
+    /* background-size: cover; */
+    background-size: 100% 115%; /* Scale the background to twice its height */
     background-repeat: no-repeat;
     background-attachment: fixed;
     height: 100vh;
@@ -12,7 +13,29 @@
   }
   
   .login-content {
-    /* background-color: rgba(0, 0, 0, 0.5); Optional: Add a semi-transparent background for better readability */
     padding: 20px;
     border-radius: 10px;
+  }
+
+  .button-group {
+    display: flex;
+    flex-direction: row; /* Arrange buttons in a row */
+    gap: 10px; /* Add space between the buttons */
+    margin-top: 20px;
+  }
+
+  .login-button:hover {
+    background-color: #5b4f65 !important;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .play-button {
+    background-color: transparent;
+    border-color: #8a8191;
+    color: white;
+  }
+  
+  .play-button:hover {
+    background-color: #5b4f65 !important;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
   }

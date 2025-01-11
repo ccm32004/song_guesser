@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Burger, Container, Group, Menu, Avatar, UnstyledButton, Text } from '@mantine/core';
+import { Burger, Container, Group, Menu, Avatar, UnstyledButton, Text, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconChevronDown, IconLogout, IconLogin } from '@tabler/icons-react';
+import { IconMusic } from '@tabler/icons-react';
 import './Header.css'; // Correctly import the CSS file
 
 const links = [
@@ -39,7 +40,10 @@ export function HeaderSimple() {
     <header className="header">
       <Container size="md" className="inner">
         {/* Left Side: App Name */}
-        <div>Heardle</div>
+        <div style={{ display: 'flex', alignItems: 'left' }}>
+        <IconMusic size={24} style={{ marginRight: '8px' }} /> {/* Add the music icon */}
+        <Title order={4}>Heardle</Title>
+      </div>
 
         {/* Center: Navigation Links */}
         <Group spacing={5} className="links">
