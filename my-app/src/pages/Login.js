@@ -1,10 +1,12 @@
 // Login.js
 import React from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { Button, Container, Title } from '@mantine/core';
 import { HeaderSimple } from '../components/Header';
 import './Login.css'; // Import the CSS file
 
 const Login = () => {
+  const navigate = useNavigate();
   const handleLogin = () => {
     window.location.href = 'http://localhost:8888/login'; // TODO: put this in an env. 
   };
@@ -12,6 +14,7 @@ const Login = () => {
   const handlePlayWithoutLogin = () => {
     // Handle the action for playing without logging in
     console.log('Play without logging in');
+    navigate('/dashboard'); // Redirect to the dashboard page
   };
 
   return (
@@ -33,8 +36,7 @@ const Login = () => {
           >
             Play w/o Login
           </Button>
-        </div>
-        
+        </div>   
       </Container>
     </div>
   );

@@ -31,5 +31,6 @@ export default defineConfig({
         ".js": "jsx",
       },
     },
+    exclude: ["fsevents"]
   },
 });

@@ -36,6 +36,6 @@
   }
   
   .play-button:hover {
-    background-color: #5b4f65 !important;
+    background-color: linear-gradient(135deg, rgba(72, 0, 72, 0.8), rgba(192, 72, 72, 0.8), rgba(44, 28, 57, 0.8)) !important;
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
   }

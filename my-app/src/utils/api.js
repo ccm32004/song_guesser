@@ -1,3 +1,20 @@
+const API_BASE_URL = 'http://localhost:8888' //todo: put this in an env variable
+
+export const fetchSongSuggestions = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/songNames`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching song suggestions:', error);
+      throw error;
+    }
+  };
+
+
 export const fetchSnippet = async () => {
     try {
         const response = await fetch('http://localhost:8888/getTrackId', {

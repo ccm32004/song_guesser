@@ -36,6 +36,40 @@ app.use(express.static(__dirname + '/public'))
        cookie: { secure: false } // Set secure: true in production with HTTPS
    }));
 
+
+//client credentials flow
+async function getAccessToken(req) {
+  console.log("getting new client credential token")
+  const tokenUrl = 'https://accounts.spotify.com/api/token';
+  const response = await axios.post(tokenUrl, new URLSearchParams({
+      grant_type: 'client_credentials',
+  }), {
+      headers: {
+          'Authorization': `Basic ${Buffer.from(`${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`).toString('base64')}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+      },
+  });
+
+  const accessToken = response.data.access_token;
+  req.session.clientAccessToken = accessToken; // Store the access token in the session //this is where the client credentials
+  return accessToken
+}
+
+
+// Function to handle token refresh and retry
+async function getValidAccessToken(req) {
+  let access_token;
+  if (req.session.access_token) {
+      access_token = req.session.access_token; // Authorization code flow
+  } else if (req.session.clientAccessToken) {
+      access_token = req.session.clientAccessToken; // Client credentials flow
+  } else {
+      access_token = await getAccessToken(req); // Get new token
+  }
+  return access_token;
+}
+
+//authentication authorization code flow
 app.get('/login', (req, res) => {
     const state = generateRandomString(16);
     res.cookie('spotify_auth_state', state);
@@ -142,11 +176,77 @@ app.get('/refresh_token', (req, res) => {
     });
 });
 
+
 //move routes to a separate file later???
 // Route to get a Taylor Swift song snippet
+// Route to get a Taylor Swift song snippet
+app.get('/getTrackId', async (req, res) => {
+  try {
+      let access_token = await getValidAccessToken(req);
+      if (!access_token) {
+          return res.status(401).json({ error: 'Unauthorized access' });
+      }
+
+      const randomSongTitle = taylorSwiftSongs[Math.floor(Math.random() * taylorSwiftSongs.length)];
+      const artist = req.query.artist || 'Taylor Swift';
+      const title = randomSongTitle || '';
+      const query = `${title} artist:${artist}`.trim();
+
+      const song = await searchSong(query, access_token, req);
+
+      if (song) {
+          res.json({
+              title: song.name,
+              artist: song.artists[0].name,
+              uri: song.uri,
+              preview_url: song.preview_url,
+          });
+      } else {
+          res.status(404).json({ error: 'No song found' });
+      }
+  } catch (err) {
+      console.error(err);
+      res.status(500).send('Error fetching song snippet');
+  }
+});
+
+// Search for a song with retry logic for unauthorized error
+async function searchSong(query, access_token, req) {
+  try {
+      const response = await axios.get('https://api.spotify.com/v1/search', {
+          headers: { Authorization: `Bearer ${access_token}` },
+          params: { q: query, type: 'track', limit: 1, market: 'CA' },
+      });
+
+      const song = response.data.tracks.items[0];
+      return song ? song : null;
+  } catch (err) {
+      console.error("Error during song search:", err);
+      if (err.response && err.response.status === 401) {
+          console.log("Token expired or unauthorized, refreshing token...");
+          // Retry after refreshing the token
+          const newAccessToken = await getAccessToken(req); // Fetch a new token
+          return searchSong(query, newAccessToken); // Retry with new token
+      } else {
+          throw err; // Re-throw other errors
+      }
+  }
+}
+/*
 app.get('/getTrackId', async (req, res) => {
     try {
-        const access_token = req.session.access_token;
+        let access_token;
+        if (req.session.access_token) {
+            // Authorization code flow
+            access_token = req.session.access_token;
+        } else if (req.session.clientAccessToken) {
+            // Client credentials flow
+            access_token = req.session.clientAccessToken;
+        } else {
+            // No access token available
+            access_token = await getAccessToken(req);
+            //return res.status(401).json({ error: 'No access token available' });
+        }
         console.log("GETTING TOKEN")
         console.log(access_token);
 
@@ -193,6 +293,11 @@ app.get('/getTrackId', async (req, res) => {
         console.error(err);
         res.status(500).send('Error fetching song snippet');
     }
+});*/
+
+//fetches the song json file for autocomplete
+app.get('/api/songNames', (req, res) => {
+  res.sendFile(path.join(__dirname, 'songs.json'));
 });
 
 // Start the server

@@ -65,3 +65,18 @@
     gap: 20px; /* Add space between the icon and the text */
     margin-bottom: 20px; /* Add space below the mode header */
 }
+
+.play-music-button:hover {
+    background: #916691 !important; /* Reverse gradient on hover */
+  }
+  
+.skip-button:hover {
+    background-color: #5b4f65 !important; /* Change background color on hover */
+    border-color: #73687b; /* Change border color on hover */
+}
+
+.validation-message {
+    color: white;
+    text-align: center;
+    min-height: 30px; /* Adjust the height as needed */
+}

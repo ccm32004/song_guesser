@@ -1,0 +1,21 @@
+.input {
+    background-color: #5b4f65 !important;
+    color: white !important;
+    padding: 0 3em !important;
+    text-align: center !important;
+  }
+  
+.dropdown {
+  background-color: #44354f !important;
+  border-color: #73687b !important;
+  margin-top: 0 !important;
+}
+
+/* Example of targeting the autocomplete item */
+.option:hover{
+  background-color: #4b3b5b !important;
+}
+
+.option:active{
+  background-color: #6d336d !important;
+}
