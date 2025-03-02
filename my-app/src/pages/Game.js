@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { RingProgress, Center, ActionIcon, Autocomplete, Button, Card, Loader, Modal } from '@mantine/core';
-import { IconPlayerPlayFilled, IconBrandDeezer, IconFlameFilled, IconArrowNarrowLeft } from '@tabler/icons-react'; // Play Icon
+import { RingProgress, Center, ActionIcon, Autocomplete, Button, Card, Loader, Modal, Radio } from '@mantine/core';
+import { IconPlayerPlayFilled, IconBrandDeezer, IconFlameFilled, IconArrowNarrowLeft, IconSettings } from '@tabler/icons-react'; // Play Icon
 import { fetchSnippet, fetchSongSuggestions } from '../utils/api'; // Import the fetchSnippet function
 import { HeaderSimple } from '../components/Header';
 import './Game.css'; // Import the CSS file
@@ -26,30 +26,40 @@ const Game = () => {
     const [loadingMessage, setLoadingMessage] = useState('Loading next song...');
     const inputRef = useRef(null); //reference to input field 9mb undo cuz this function isn't really working
     const [songSuggestions, setSongSuggestions] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [snippetLength, setSnippetLength] = useState(2); 
+
+    const difficultyMap = {
+        easy: 3,    // Easy = 3 seconds
+        medium: 2,  // Medium = 2 seconds
+        hard: 1     // Hard = 1 second
+    };
 
     useEffect(() => {
         if (audioRef.current && songPreviewUrl) {
-            audioRef.current.load(); // Reload the audio element when the URL changes
-            //audioRef.current.src = songPreviewUrl;
+            // audioRef.current.load(); // Reload the audio element when the URL changes
+            audioRef.current.src = songPreviewUrl;
+            audioRef.current.load();
+            //make the player reflect the current state of the audio element
+
+            setProgress(0);
+            if (intervalId) {
+                clearInterval(intervalId);
+            }
+            //TODO: refactor laterr
+            const id = setInterval(() => {
+                setProgress((prevProgress) => {
+                  if (prevProgress >= 100) {
+                    clearInterval(id); // Stop the interval once it reaches 100%
+                    audioRef.current.pause();
+                    handleAudioEnded();
+                    return 100;
+                  }
+                  return prevProgress + 0.5; 
+                });
+            }, snippetLength * 10); 
         }
     }, [songPreviewUrl]);
-
-    useEffect(() => {
-        const handleKeyDown = (event) => {
-          if (event.code === 'Space' && document.activeElement !== inputRef.current) {
-            event.preventDefault(); // Prevent default spacebar action (scrolling)
-            if (!isPlaying && playCount > 0) {
-              playSnippet();
-            }
-          }
-        };
-      
-        window.addEventListener('keydown', handleKeyDown);
-      
-        return () => {
-          window.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [isPlaying, playCount]);
 
     useEffect(() => {
         // Fetch song suggestions from the backend API
@@ -65,6 +75,13 @@ const Game = () => {
         fetchSuggestions();
     }, []);
 
+    // Handle snippet length change
+    //this should reset the streak in the new mode ! 
+    const handleSnippetLengthChange = (value) => {
+        // Directly set snippetLength from the value passed by Radio
+        setSnippetLength(parseInt(value, 10)); // Convert string to number
+    };
+
     const handleFetchSnippet = async () => {
         try {
             const { song, previewUrl } = await fetchSnippet();
@@ -77,7 +94,7 @@ const Game = () => {
     };
 
     const playSnippet = () => {
-        if (playCount >= 3) {
+        if (playCount >= 2) {
           setValidationMessage('You have reached the maximum number of plays.');
           return;
         }
@@ -105,7 +122,10 @@ const Game = () => {
             //typically it is no applied immediately, rahter it is scheduled to applied in the next render (which is why it is one behind)
 
               console.log("playcount after autoplay works: "+  playCount); // Increment play count
+
+              //this is the part that controls the ring progress, and pauses after 3 seconds
               const id = setInterval(() => {
+                console.log("entered interval : " + progress);
                 setProgress((prevProgress) => {
                   if (prevProgress >= 100) {
                     clearInterval(id); // Stop the interval once it reaches 100%
@@ -115,16 +135,16 @@ const Game = () => {
                   }
                   return prevProgress + 1; // Increment progress by 1
                 });
-              }, 30); // Adjust the speed by changing the interval time (ms)
+              }, snippetLength * 10); // Adjust the speed by changing the interval time (ms)
             
             setIntervalId(id);
 
-            setTimeout(() => {
-                audio.pause();
-                setIsPlaying(false);
-                clearInterval(id);
-                handleAudioEnded();
-            }, 3000); // Stop playback after 3 seconds
+            // setTimeout(() => {
+            //     audio.pause();
+            //     setIsPlaying(false);
+            //     clearInterval(id);
+            //     handleAudioEnded();
+            // }, 3000); // Stop playback after 3 seconds
             }).catch((error) => {
             // Auto-play was prevented
             // Show paused UI.
@@ -151,6 +171,9 @@ const Game = () => {
         normalizedSongTitle = normalizedSongTitle.replace(/\(taylor'sversion\)/g, ''); 
         normalizedSongTitle = normalizedSongTitle.replace(/\(feat\..*?\)/g, ''); // Remove (feat. [artist])
         normalizedSongTitle = normalizedSongTitle.replace(/\(.*?version\)/g, ''); // Remove (Live Version)
+        normalizedSongTitle = normalizedSongTitle.replace('.', ''); 
+        normalizedSongTitle = normalizedSongTitle.replace(',', ''); 
+        normalizedSongTitle = normalizedSongTitle.replace(' ', ''); 
         const normalizedInputTitle = inputTitle.toLowerCase().replace(/\s+/g, '');
         console.log('Song title:', normalizedSongTitle);
         console.log('Input title:', normalizedInputTitle);
@@ -158,9 +181,18 @@ const Game = () => {
         if (normalizedInputTitle === normalizedSongTitle) {
             setLoadingMessage('Correct! Loading next song...');
             setIsLoadingNextSong(true); // Set loading next song state to true
-            setTimeout(() => {
-                resetGame();
-                setIsLoadingNextSong(false); // Reset loading next song state after 2 seconds
+            setTimeout(async () => {
+                console.log("resetting game");
+
+                setPlayCount(0); // Reset play count immediately
+                setCurrentStreak(currentStreak + 1); // Increment the streak
+                setInputTitle(''); // Reset input title
+                setValidationMessage(''); // Reset validation message
+            
+                await handleFetchSnippet();
+                setIsLoadingNextSong(false);
+                clearInterval
+                 // Reset loading next song state after 2 seconds
             }, 1300);
         } else {
             setValidationMessage('Incorrect. Try again!');
@@ -182,31 +214,16 @@ const Game = () => {
         setProgress(0);
     };
 
-    const resetGame = async () => {
+    // const resetGame = async () => {
+    //     console.log("resetting game");
 
-        console.log("resetting game");
-        setPlayCount(0); // Reset play count immediately
-        setCurrentStreak(currentStreak + 1); // Increment the streak
-        setInputTitle(''); // Reset input title
-        setValidationMessage(''); // Reset validation message
+    //     setPlayCount(0); // Reset play count immediately
+    //     setCurrentStreak(currentStreak + 1); // Increment the streak
+    //     setInputTitle(''); // Reset input title
+    //     setValidationMessage(''); // Reset validation message
     
-        // Now fetch the new snippet and play it
-        await handFetchSnippet();
-        // setShowTextBox(true); // Show text box again after fetching new snippet
-    };
-
-    const handFetchSnippet = async () => {
-        try {
-            const { song, previewUrl } = await fetchSnippet();
-            setSong(song);
-            setSongPreviewUrl(previewUrl);
-            setError(null); // Clear any previous error
-            //playSnippet(); // Play the new snippet after fetching
-        } catch (err) {
-            setError(err.message);
-        }
-    };
-
+    //     await handleFetchSnippet();
+    // };
 
     const skipSnippet = async () => {   
         setValidationMessage("The song was: " + song.title); 
@@ -221,11 +238,17 @@ const Game = () => {
             setValidationMessage(''); // Reset validation message
             await handleFetchSnippet(); // Fetch a new snippet
             setIsLoadingNextSong(false); // Reset loading next song state after 2 seconds
+            clearInterval
         }, 1300);
     }
 
     const handleBackClick = () => {
         navigate(-1); // Navigate to the previous page
+    };
+
+    const handleGearClick = () => {
+        // You can define the logic for the gear icon click here (e.g., open a settings modal
+        setIsModalOpen(true);
     };
 
     return (
@@ -234,6 +257,14 @@ const Game = () => {
             <div className="mode-header">
                 <IconArrowNarrowLeft size={24}  onClick={handleBackClick}/>
                 <h2>Taylor Swift Mode</h2>
+                <ActionIcon 
+                    size={24} 
+                    style={{ 
+                        backgroundColor: 'transparent',
+                     }} 
+                    onClick={handleGearClick}>
+                    <IconSettings size={24} style={{ color: 'FFFFFF', backgroundColor: 'transparent'}}  />
+                </ActionIcon>
             </div>
             <Card shadow="sm" padding = "0" radius = "md" className="game-card">
             {song && (
@@ -242,7 +273,7 @@ const Game = () => {
             <div className = "left-content">
               <div className="stat">
                 <IconBrandDeezer size={24} />
-                <h2>{3 - playCount}</h2> 
+                <h2>{1 - playCount}</h2> 
               </div>
               <div> <h4>Plays Left For Current Song</h4> </div>
               <div className="stat">
@@ -271,7 +302,7 @@ const Game = () => {
                         ref={audioRef}
                         controls
                         style={{ display: 'none' }} // Hide the audio player
-                        autoplay
+                        autoPlay
                     >
                         <source src={songPreviewUrl} type="audio/mpeg" />
                         Your browser does not support the audio tag.
@@ -295,7 +326,7 @@ const Game = () => {
                                     position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', borderRadius: '50%'
                                 }} //backgroundColor: '#5b4f65',
                                 onClick={isPlaying ? stopSnippet : playSnippet}
-                                disabled={playCount >= 3} // Disable button after 3 plays
+                                disabled={playCount >= 1} // Disable button after 2 plays
                             >
                                 <IconPlayerPlayFilled size={24} style={{ color: 'e8e6e9'}}/>
                             </ActionIcon>
@@ -314,7 +345,7 @@ const Game = () => {
 
                     <form onSubmit={handleSubmit} style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '13px' }}>
                         <Autocomplete
-                            clearable
+                            clearable //TODO address this console error
                             value={inputTitle}
                             onChange={setInputTitle}
                             variant="filled"
@@ -340,8 +371,26 @@ const Game = () => {
                 </div>
             )}
             </Card>
+            <Modal
+                opened={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                title="Settings"
+                centered 
+            >
+                <p>Choose the snippet length:</p>
+                <Radio.Group
+                    value={snippetLength.toString()} // Convert the number to string for Radio values
+                    onChange={handleSnippetLengthChange} // Call handler on change
+                    name="snippet-length"
+                >
+                    <Radio value="3" label="Easy" />
+                    <Radio value="2" label="Medium" />
+                    <Radio value="1" label="Hard" />
+                </Radio.Group>
+            </Modal>
         </div>
     );
 };
 
 export default Game;
+

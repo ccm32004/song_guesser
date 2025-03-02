@@ -64,6 +64,8 @@
     align-items: center;
     gap: 20px; /* Add space between the icon and the text */
     margin-bottom: 20px; /* Add space below the mode header */
+    justify-content: space-between;
+    width: 68%;
 }
 
 .play-music-button:hover {
