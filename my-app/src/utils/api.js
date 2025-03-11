@@ -45,5 +45,18 @@ export const fetchSnippet = async () => {
     }
 }; 
 
-
-//also make an api to retrieve all the song titles for autocomplete
+// Function to fetch the user's profile
+// Function to fetch the user's profile
+export const fetchUserProfile = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/profile`, { credentials: 'include' });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    throw error;
+  }
+};

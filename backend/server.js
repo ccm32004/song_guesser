@@ -1,15 +1,18 @@
 require('dotenv').config();
 const express = require('express');
 const request = require('request');
-const crypto = require('crypto');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const cors = require('cors');
 const axios = require('axios'); 
 
-//stuff to get the new preview url 
+//stuff related to getting the url
 const cheerio = require('cheerio');
 const jsonpath = require('jsonpath');
+
+//stuff related to mongo db saving the high score ts
+const mongoose = require('mongoose');
+const userController = require('./userController');
 
 
 const fs = require('fs');
@@ -19,22 +22,26 @@ const taylorSwiftSongs = JSON.parse(fs.readFileSync(path.resolve(__dirname, 'son
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const origin = process.env.CORS_ORIGIN;
+const session_secret = process.env.SESSION_SECRET;
 const client_id = process.env.SPOTIFY_CLIENT_ID; 
 const client_secret = process.env.SPOTIFY_CLIENT_SECRET; 
 const redirect_uri = process.env.SPOTIFY_REDIRECT_URI; 
+const mongoURI = process.env.MONGO_URI;
 
 app.use(express.static(__dirname + '/public'))
    .use(cookieParser())
    .use(cors({
-      origin: 'http://localhost:3000', // TODO: put this as an env variable
+      origin: origin,
       credentials: true 
   }))
    .use(session({
-       secret: 'your-secret-key', // Use a strong secret in production
+       secret: session_secret, // Use a strong secret in production
        resave: false,
        saveUninitialized: true,
        cookie: { secure: false } // Set secure: true in production with HTTPS
-   }));
+   }))
+   .use(express.json());
 
 
 //client credentials flow
@@ -87,7 +94,8 @@ app.get('/login', (req, res) => {
     }));
 });
 
-app.get('/callback', (req, res) => {
+//TODO:  check the call on the front end so that it has await mb
+app.get('/callback', async (req, res) => {
     const code = req.query.code || null;
     const state = req.query.state || null;
     const storedState = req.cookies ? req.cookies['spotify_auth_state'] : null;
@@ -114,7 +122,7 @@ app.get('/callback', (req, res) => {
         json: true
       };
   
-      request.post(authOptions, (error, response, body) => {
+      request.post(authOptions, async (error, response, body) => {
         if (!error && response.statusCode === 200) {
           const access_token = body.access_token;
           const refresh_token = body.refresh_token;
@@ -124,19 +132,39 @@ app.get('/callback', (req, res) => {
           req.session.refresh_token = refresh_token;
 
            // Save session
-          req.session.save((err) => {
+         req.session.save(async (err) => {
             if (err) {
               console.error('Failed to save session:', err);
               res.redirect('http://localhost:3000/?error=session_save_failed');
             } else {
-              //check if the session contains the token info
               console.log("SESSION INFO");
               console.log('Session saved:', req.session);
-              res.redirect(`http://localhost:3000/dashboard?access_token=${access_token}`);
+              
+              await mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+              .then(async () => {
+                console.log('Connected to MongoDB');
+                const response = await getUserProfile(access_token);
+                const { display_name, email } = response.data;
+
+                try {
+                  const savedUser = await userController.createUser(display_name, email);
+                  console.log('New user created:', savedUser);
+                } catch (error) {
+                  console.error('Error creating user:', error);
+                }
+
+                // Redirect to dashboard with access token in URL
+                res.redirect(`http://localhost:3000/dashboard?access_token=${access_token}`);
+              })
+              .catch((err) => {
+                console.error('MongoDB connection error:', err);
+                res.redirect('http://localhost:3000/?error=mongo_connection_failed');
+              });
+
+              //TODO: question for the culture does the dashboard rlly need the access token lmao
             }
           });
 
-  
           // Redirect or respond with tokens
         //   res.redirect('/#' +
         //     new URLSearchParams({ access_token, refresh_token }));
@@ -232,68 +260,6 @@ async function searchSong(query, access_token, req) {
       }
   }
 }
-/*
-app.get('/getTrackId', async (req, res) => {
-    try {
-        let access_token;
-        if (req.session.access_token) {
-            // Authorization code flow
-            access_token = req.session.access_token;
-        } else if (req.session.clientAccessToken) {
-            // Client credentials flow
-            access_token = req.session.clientAccessToken;
-        } else {
-            // No access token available
-            access_token = await getAccessToken(req);
-            //return res.status(401).json({ error: 'No access token available' });
-        }
-        console.log("GETTING TOKEN")
-        console.log(access_token);
-
-        //select a song from the list of songs
-        const randomSongTitle = taylorSwiftSongs[Math.floor(Math.random() * taylorSwiftSongs.length)];
-        console.log("RANDOM SONG TITLE ", randomSongTitle);
-
-        const artist = req.query.artist || 'Taylor Swift';
-        const title = randomSongTitle || '';
-
-        const query = `${title} artist:${artist}`.trim();
-        console.log("Search query:", query);
-
-
-        const searchResponse = await axios.get('https://api.spotify.com/v1/search', {
-            headers: {
-                Authorization: `Bearer ${access_token}`,
-            },
-            params: {
-                q: query,
-                type: 'track',
-                limit: 1, // Get one song
-                market: 'CA'
-            },
-        });
-
-        const song = searchResponse.data.tracks.items[0];
-        if (song) {
-            console.log("found song")
-            console.log("Song details:", song); // Log all song details
-            const snippetUrl = song.preview_url; // URL for the song snippet
-            console.log("GETTING SNIPPET FROM GET TRACK ID API")
-            console.log(snippetUrl);
-            res.json({
-                title: song.name,
-                artist: song.artists[0].name,
-                uri: song.uri,
-                preview_url: song.preview_url,
-            });
-        } else {
-            res.status(404).json({ error: 'No song found' });
-        }
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Error fetching song snippet');
-    }
-});*/
 
 //fetches the song json file for autocomplete
 app.get('/api/songNames', (req, res) => {
@@ -315,7 +281,6 @@ function generateRandomString(length) {
     }
     return result;
 }
-
 
 //this is the workaround to get the song preview URL
 app.get('/track/:trackId', async (req, res) => {
@@ -368,14 +333,11 @@ async function fetchPreviewUrl(trackId) {
 
 function findNodeValueWithJsonPath(jsonString, targetNode) {
   try {
-      // Construct the JsonPath query
       const query = `$..${targetNode}.url`;
       console.log(`Using JsonPath Query: ${query}`); // Debug query
 
-      // Perform the query using jsonpath
       const result = jsonpath.query(JSON.parse(jsonString), query);
 
-      // Return the first result if available
       if (result.length > 0) {
           return result[0]; // Return the first match
       }
@@ -384,3 +346,32 @@ function findNodeValueWithJsonPath(jsonString, targetNode) {
   }
   return null;
 }
+
+//endpoints related to user login/authentication situations
+
+app.get('/api/profile', async (req, res) => {
+  try {
+    const access_token = await getValidAccessToken(req);
+    if (!access_token) {
+      return res.status(401).json({ error: 'Unauthorized access' });
+    }
+
+    const response = await axios.get('https://api.spotify.com/v1/me', {
+      headers: { Authorization: `Bearer ${access_token}` },
+    });
+
+    res.json(response.data);
+  } catch (err) {
+    console.error('Error fetching user profile:', err);
+    res.status(500).send('Error fetching user profile');
+  }
+});
+
+//internal get profile route
+// Helper function to fetch Spotify user profile
+const getUserProfile = (accessToken) => {
+  return axios.get('https://api.spotify.com/v1/me', {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+};
+

@@ -12,8 +12,6 @@ const Login = () => {
   };
 
   const handlePlayWithoutLogin = () => {
-    // Handle the action for playing without logging in
-    console.log('Play without logging in');
     navigate('/dashboard'); // Redirect to the dashboard page
   };
 
