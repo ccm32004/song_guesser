@@ -192,7 +192,6 @@ const Game = () => {
                 await handleFetchSnippet();
                 setIsLoadingNextSong(false);
                 clearInterval
-                 // Reset loading next song state after 2 seconds
             }, 1300);
         } else {
             setValidationMessage('Incorrect. Try again!');
@@ -213,17 +212,6 @@ const Game = () => {
         setIsPlaying(false);
         setProgress(0);
     };
-
-    // const resetGame = async () => {
-    //     console.log("resetting game");
-
-    //     setPlayCount(0); // Reset play count immediately
-    //     setCurrentStreak(currentStreak + 1); // Increment the streak
-    //     setInputTitle(''); // Reset input title
-    //     setValidationMessage(''); // Reset validation message
-    
-    //     await handleFetchSnippet();
-    // };
 
     const skipSnippet = async () => {   
         setValidationMessage("The song was: " + song.title); 

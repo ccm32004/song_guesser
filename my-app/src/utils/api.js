@@ -1,5 +1,6 @@
 const API_BASE_URL = 'http://localhost:8888' //todo: put this in an env variable
 
+//this is for autocomplete
 export const fetchSongSuggestions = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/api/songNames`);
@@ -14,42 +15,30 @@ export const fetchSongSuggestions = async () => {
     }
   };
 
-
 export const fetchSnippet = async () => {
-    try {
-        const response = await fetch('http://localhost:8888/getTrackId', {
-            credentials: 'include', // Include cookies
-        });
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
+  try {
+      const response = await fetch(`${API_BASE_URL}/getTrackSnippet`, {
+          credentials: 'include', // Include cookies
+      });
 
-        const data = await response.json();
+      if (!response.ok) {
+          throw new Error('Network response was not ok');
+      }
 
-        // Extract track ID from URI
-        const trackId = data.uri.split(':').pop();
-        const trackResponse = await fetch(`http://localhost:8888/track/${trackId}`);
+      const data = await response.json();
+      console.log('Fetched Song:', data);
 
-        if (!trackResponse.ok) {
-            throw new Error('Network response was not ok');
-        }
+      return { song: data, previewUrl: data.previewUrl };
+  } catch (err) {
+      console.error('Error fetching the snippet:', err);
+      throw new Error('Error fetching the song snippet.');
+  }
+};
 
-        const trackData = await trackResponse.json();
-        const previewUrl = trackData.previewUrl;
-        console.log('Preview URL:', previewUrl);
-
-        return { song: data, previewUrl };
-    } catch (err) {
-        console.error('Error fetching the snippet or track details:', err);
-        throw new Error('Error fetching the song snippet or track details.');
-    }
-}; 
-
-// Function to fetch the user's profile
 // Function to fetch the user's profile
 export const fetchUserProfile = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/profile`, { credentials: 'include' });
+    const response = await fetch(`${API_BASE_URL}/profile`, { credentials: 'include' });
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }

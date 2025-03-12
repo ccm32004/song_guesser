@@ -1,24 +1,22 @@
-const User = require("./user");
+const axios = require('axios');
+const User = require("../models/user");
 
-// Create a single user
+//***************** MONGO DB RELATED ENDPOINTS ******************//
 const createUser = async (displayName, email, highScore = 0) => {
     try {
-      // Check if user already exists
       const existingUser = await User.findOne({ email });
       if (existingUser) {
         return { status: 400, message: "User already exists with that email" };
       }
   
-      // Create a new user
       const newUser = new User({
         displayName,
         email,
         highScore,
       });
   
-      // Save the user to the database
       const savedUser = await newUser.save();
-      return { status: 201, user: savedUser }; // Respond with the created user
+      return { status: 201, user: savedUser }; 
     } catch (error) {
       console.error("Error creating user:", error);
       return { status: 500, message: "Error creating user" };
@@ -28,7 +26,6 @@ const createUser = async (displayName, email, highScore = 0) => {
 // Update high score for a user
 const updateHighScore = async (email, difficulty, score, artist) => {
     try {
-      // Find the user
       const user = await User.findById(email);
       if (!user) {
         return { status: 404, message: 'User not found' };
@@ -71,8 +68,35 @@ const getUser = async (req, res) => {
     }
 };
 
+//***************** SPOTIFY API ENDPOINTS RELATING TO USER ******************//
+async function getProfile(req, res) {
+  try {
+    const access_token = req.session.access_token
+    
+    if (!access_token) {
+      return res.status(401).json({ error: 'Unauthorized access' });
+    }
+
+    const response = await axios.get('https://api.spotify.com/v1/me', {
+      headers: { Authorization: `Bearer ${access_token}` },
+    });
+
+    res.json(response.data);
+  } catch (err) {
+    res.status(500).send('Error fetching user profile');
+  }
+}
+
+const getUserProfile = (accessToken) => {
+  return axios.get('https://api.spotify.com/v1/me', {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+};
+
 module.exports = {
   createUser,
   updateHighScore,
-  getUser
+  getUser,
+  getProfile,
+  getUserProfile,
 };
