@@ -16,7 +16,7 @@ async function getTrackSnippet(req, res) {
             return res.status(401).json({ error: 'Unauthorized access: no access token' });
         }
 
-        const taylorSwiftSongs = JSON.parse(fs.readFileSync(path.resolve(__dirname, '..', 'songs.json'), 'utf8'));
+        const taylorSwiftSongs = JSON.parse(fs.readFileSync(path.resolve(__dirname, '..', 'taylorswift.json'), 'utf8'));
         const randomSongTitle = taylorSwiftSongs[Math.floor(Math.random() * taylorSwiftSongs.length)];
         const artist = req.query.artist || 'Taylor Swift';
         const title = randomSongTitle || '';

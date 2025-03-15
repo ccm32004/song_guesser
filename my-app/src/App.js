@@ -3,18 +3,18 @@ import { Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Game from './pages/Game';
-import { AuthProvider } from './AuthContext';
+import Stats from './pages/Stats';
+
 
 const App = () => {
   return (
-    <AuthProvider>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/game" element={<Game/>} />
-        <Route path="/" element={<Login />} />
-      </Routes>
-    </AuthProvider>
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/game" element={<Game/>} />
+      <Route path="/stats" element={<Stats />} />
+      <Route path="/" element={<Login />} />
+    </Routes>
   );
 };
 

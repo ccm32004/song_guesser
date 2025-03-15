@@ -235,7 +235,6 @@ const Game = () => {
     };
 
     const handleGearClick = () => {
-        // You can define the logic for the gear icon click here (e.g., open a settings modal
         setIsModalOpen(true);
     };
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter} from 'react-router-dom';
 import { MantineProvider, ColorSchemeScript, createTheme} from '@mantine/core';
 import '@mantine/core/styles.css';
 import './index.css';
@@ -56,9 +56,9 @@ root.render(
   <React.StrictMode>
     <ColorSchemeScript forceColorScheme="dark" />
     <MantineProvider theme={customTheme}>
-      <Router>
+      <BrowserRouter>
         <App />
-      </Router>
+      </BrowserRouter>
     </MantineProvider>
   </React.StrictMode>
 );

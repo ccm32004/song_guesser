@@ -29,7 +29,7 @@ const Login = () => {
             Login with Spotify
           </Button>
           <Button
-            onClick={handlePlayWithoutLogin}
+            onClick={handlePlayWithoutLogin} //TODO: fix this it doesn't hover properly for some reason
             className="play-button"
           >
             Play w/o Login

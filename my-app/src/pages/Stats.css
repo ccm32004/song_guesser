@@ -1,0 +1,97 @@
+.stats-container {
+    background-image: url('/purple2.png'); /* Adjust the path if needed */
+    background-size: 100% 270%; /* Scale the background to twice its height */
+    background-position: top; /* Position the background at the top */
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.outer-container {
+    display: flex;
+    flex-direction: column; /* Stack child elements vertically */
+    padding: 20px;
+    gap: 20px; /* Add space between sections */
+    width: 70%
+  }
+
+/* Row container with two columns */
+.row {
+    display: flex;
+    gap: 20px; /* Space between columns */
+    justify-content: space-between; /* Distribute columns across the available width */
+    flex: 0 0 10%;
+  }
+  
+  /* Column styles */
+  .column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Image column - Portrait of Taylor Swift */
+  .image-column {
+    flex: 1; /* Take equal space for the image */
+    background-color: rgba(192, 72, 72, 0.3);
+    padding: 20px;
+  }
+  
+  .microphone-icon {
+    text-align: center;
+    font-size: 48px; /* Adjust icon size */
+  }
+  
+  .artist-name {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 8px;
+  }
+  
+  /* Chart column - Takes up 80% of the width */
+  .chart-column {
+    flex: 3; /* Takes 80% of the available space */
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent white background */
+  }
+  
+  .chart {
+    width: 100%; /* Full width for the chart */
+    height: 150px; /* Set a height for the chart (adjust as needed) */
+    background-color: lightgray; /* Placeholder background color for the chart */
+  }
+  
+  /* Card content section (streaks) */
+  .card-content-stats {
+    display: flex;
+    justify-content: center; /* Center the streak items horizontally */
+    align-items: center; /* Vertically align the items */
+    gap: 60px; /* Space between streak items */
+    flex-wrap: wrap; /* Allow streak items to wrap if the container is too small */
+    background: linear-gradient(rgba(72, 0, 72, 0.8), rgba(192, 72, 72, 0.7));
+    flex: 0 0 70%;
+  }
+  
+  .streak-item {
+    display: flex;
+    flex-direction: column; /* Stack score and difficulty vertically */
+    align-items: center; /* Center the content */
+    gap: 5px;
+  }
+  
+  .streak-heading {
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+  
+  .streak-value {
+    font-size: 2.5em;
+    font-weight: bold;
+  }

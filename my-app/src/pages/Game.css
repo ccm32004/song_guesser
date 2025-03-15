@@ -10,7 +10,10 @@
     justify-content: flex-start;
     align-items: center;
     text-align: center;
+    padding: 20px;
 }
+
+/*TODO: modularize the styling of the container because it is used in multiple pages */
 
 .game-card {
     width: 70%;
@@ -76,7 +79,6 @@
     background-color: #5b4f65 !important; /* Change background color on hover */
     border-color: #73687b; /* Change border color on hover */
 }
-
 .validation-message {
     color: white;
     text-align: center;

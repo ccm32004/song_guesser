@@ -4,26 +4,21 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconChevronDown, IconLogout, IconLogin } from '@tabler/icons-react';
 import { IconMusic } from '@tabler/icons-react';
 import { fetchUserProfile } from '../utils/api';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link, useLocation} from 'react-router-dom';
 import './Header.css'; // Correctly import the CSS file
 
 const links = [
-  { link: '/game', label: 'Game' },
+  { link: '/login', label: 'Home' },
+  { link: '/dashboard', label: 'Game' },
   { link: '/stats', label: 'My Stats' },
   { link: '/about', label: 'About' },
 ];
 
-const user = {
-  name: 'Jane Swift',
-  email: 'jane.swift@example.com',
-  image: 'https://avatars.githubusercontent.com/u/1?v=4', // Sample avatar
-};
-
 export function HeaderSimple() {
   const [opened, { toggle }] = useDisclosure(false);
-  const [active, setActive] = useState(links[0].link);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     console.log("checking user profile")
@@ -42,17 +37,14 @@ export function HeaderSimple() {
   }, []);
 
   const items = links.map((link) => (
-    <a
+    <Link
       key={link.label}
-      href={link.link}
-      className={`link ${active === link.link ? 'active' : ''}`}
-      onClick={(event) => {
-        event.preventDefault();
-        setActive(link.link);
-      }}
+      to={link.link} // Use `to` instead of `href` for navigation
+      className={`link ${location.pathname === link.link ? 'active' : ''}`}
+      onClick={() => setActive(link.link)}
     >
       {link.label}
-    </a>
+    </Link>
   ));
 
   const handleTitleClick = () => {
