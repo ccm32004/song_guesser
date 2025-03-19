@@ -11,9 +11,15 @@
     align-items: center;
     text-align: center;
     padding: 20px;
+    transition: background-size 0.8s ease-in-out; 
+  }
+
+  .login-container:hover {
+    background-size: 120% 130%; /* Zoom in (increase size) */
   }
   
   .login-content {
+    margin-top: 40px;
     padding: 20px;
     border-radius: 10px;
   }

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Card, Button } from '@mantine/core';
-import './CardComponent.css'; // Import the CSS file
+import './DashboardCard.css'; // Import the CSS file
 
-const CardComponent = ({ title, imageSrc, buttonText, onButtonClick, error }) => {
+const DashboardCard = ({ title, imageSrc, buttonText, onButtonClick, error }) => {
   return (
     <Card shadow="sm" padding="md" radius= "md" className="card-component">
     <Card.Section className="card-section">
@@ -19,4 +19,4 @@ const CardComponent = ({ title, imageSrc, buttonText, onButtonClick, error }) =>
   );
 };
 
-export default CardComponent;
+export default DashboardCard;

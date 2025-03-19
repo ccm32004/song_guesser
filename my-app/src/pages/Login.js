@@ -8,7 +8,7 @@ import './Login.css'; // Import the CSS file
 const Login = () => {
   const navigate = useNavigate();
   const handleLogin = () => {
-    window.location.href = 'http://localhost:8888/login'; // TODO: put this in an env. 
+    window.location.href = import.meta.env.VITE_LOGIN_URL; // TODO: put this in an env. 
   };
 
   const handlePlayWithoutLogin = () => {

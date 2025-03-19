@@ -14,6 +14,7 @@ const PORT = process.env.PORT || 3001;
 const origin = process.env.CORS_ORIGIN;
 const session_secret = process.env.SESSION_SECRET;
 
+//TODO: set cors policy to only allow the frontend domain in production
 app.use(express.static(__dirname + '/public'))
    .use(cookieParser())
    .use(cors({

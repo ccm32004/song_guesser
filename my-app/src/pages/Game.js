@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { RingProgress, Center, ActionIcon, Autocomplete, Button, Card, Loader, Modal, Radio } from '@mantine/core';
 import { IconPlayerPlayFilled, IconBrandDeezer, IconFlameFilled, IconArrowNarrowLeft, IconSettings } from '@tabler/icons-react'; // Play Icon
-import { fetchSnippet, fetchSongSuggestions } from '../utils/api'; // Import the fetchSnippet function
+import { fetchSnippet, fetchSongTitleSuggestions } from '../utils/api'; // Import the fetchSnippet function
 import { HeaderSimple } from '../components/Header';
 import './Game.css'; // Import the CSS file
 import styles from './test.module.css';
@@ -10,9 +10,14 @@ import styles from './test.module.css';
 const Game = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const {song: initialSong, songPreviewUrl: initialSongPreviewUrl } = location.state || {};
+
+    //these are the initial values when you first enter the page
+    const {song: initialSong, songPreviewUrl: initialSongPreviewUrl, artistName} = location.state || {};
+
     const [song, setSong] = useState(initialSong);
     const [songPreviewUrl, setSongPreviewUrl] = useState(initialSongPreviewUrl);
+
+
     const [inputTitle, setInputTitle] = useState('');
     const [validationMessage, setValidationMessage] = useState(' ');
     const [progress, setProgress] = useState(0); // Progress state
@@ -37,7 +42,6 @@ const Game = () => {
 
     useEffect(() => {
         if (audioRef.current && songPreviewUrl) {
-            // audioRef.current.load(); // Reload the audio element when the URL changes
             audioRef.current.src = songPreviewUrl;
             audioRef.current.load();
             //make the player reflect the current state of the audio element
@@ -62,10 +66,9 @@ const Game = () => {
     }, [songPreviewUrl]);
 
     useEffect(() => {
-        // Fetch song suggestions from the backend API
         const fetchSuggestions = async () => {
           try {
-            const data = await fetchSongSuggestions();
+            const data = await fetchSongTitleSuggestions(artistName);
             setSongSuggestions(data);
           } catch (error) {
             console.error('Error fetching song suggestions:', error);
@@ -84,7 +87,7 @@ const Game = () => {
 
     const handleFetchSnippet = async () => {
         try {
-            const { song, previewUrl } = await fetchSnippet();
+            const { song, previewUrl } = await fetchSnippet(artistName);
             setSong(song);
             setSongPreviewUrl(previewUrl);
             setError(null); // Clear any previous error
@@ -146,10 +149,8 @@ const Game = () => {
             //     handleAudioEnded();
             // }, 3000); // Stop playback after 3 seconds
             }).catch((error) => {
-            // Auto-play was prevented
-            // Show paused UI.
-            console.error('Auto-play was prevented:', error);
-            setIsPlaying(false);
+                console.error('Auto-play was prevented:', error);
+                setIsPlaying(false);
             });
         }
         } else {
@@ -243,7 +244,7 @@ const Game = () => {
             <HeaderSimple className="header" />
             <div className="mode-header">
                 <IconArrowNarrowLeft size={24}  onClick={handleBackClick}/>
-                <h2>Taylor Swift Mode</h2>
+                <h2>{artistName} Mode</h2>
                 <ActionIcon 
                     size={24} 
                     style={{ 

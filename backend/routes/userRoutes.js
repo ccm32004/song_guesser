@@ -10,4 +10,6 @@ router.get('/get/:email', userController.getUser);
 
 router.get('/profile', userController.getProfile);
 
+router.delete('/deleteAllUsers', userController.deleteAllUsers);
+
 module.exports = router;

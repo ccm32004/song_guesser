@@ -5,7 +5,8 @@ const router = express.Router();
 router.get('/api/songNames/:artistName', (req, res) => {
   const artistName = req.params.artistName; 
 
-  const filePath = path.join(__dirname, `../songTitles/${artistName}.json`);
+  const formattedArtistName = artistName.toLowerCase().replace(/\s+/g, '');
+  const filePath = path.join(__dirname, `../songTitles/${formattedArtistName}.json`);
 
   res.sendFile(filePath, (err) => {
     if (err) {
@@ -13,4 +14,5 @@ router.get('/api/songNames/:artistName', (req, res) => {
     }
   });
 });
+
 module.exports = router;

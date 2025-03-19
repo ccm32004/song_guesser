@@ -3,10 +3,15 @@ const mongoose = require('mongoose');
 const userController = require('./userController');
 const { getUserProfile } = require('./userController');
 
+//this is for the frontend token
+const jwt = require('jsonwebtoken');
+const querystring = require('querystring');
+
 const client_id = process.env.SPOTIFY_CLIENT_ID; 
 const client_secret = process.env.SPOTIFY_CLIENT_SECRET; 
 const redirect_uri = process.env.SPOTIFY_REDIRECT_URI; 
 const mongoURI = process.env.MONGO_URI;
+const jwt_secret = process.env.JWT_SECRET;
 
 //generates a random string to prevent CSRF attacks
 function generateRandomString(length) {
@@ -86,8 +91,16 @@ async function callback(req, res) {
       // Create or update the user in the database
       const savedUser = await userController.createUser(display_name, email);
       console.log('New user created:', savedUser);
+
+      //make jwt token
+      const token = jwt.sign(
+        { display_name, email}, 
+        jwt_secret, 
+        { expiresIn: '1h' }  // Expiration time for the JWT
+      );
   
       // Redirect to dashboard with the access token
+      //TOO: do we need this access token lmao
       return res.redirect(`http://localhost:3000/dashboard?access_token=${access_token}`);
   
     } catch (err) {

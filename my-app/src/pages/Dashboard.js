@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Grid } from '@mantine/core'; // Import the Grid component
 import { HeaderSimple } from '../components/Header';
-import CardComponent from '../components/CardComponent'; // Import the CardComponent
+import DashboardCard from '../components/DashboardCard'; // Import the CardComponent
 import './Dashboard.css'; // Import the CSS file
 import { fetchSnippet } from '../utils/api'; // Import the fetchSnippet function
 
@@ -16,20 +16,14 @@ import playboiCartiImage from '/Playboi_Carti.png'; // Adjust the path to your i
 import theWeekndImage from  '/theWeeknd.png'; // Adjust the path to your image file
 
 const Dashboard = () => {
-  const [song, setSong] = useState(null);
-  const [songPreviewUrl, setSongPreviewUrl] = useState(null);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const handleFetchSnippet = async () => {
+  const navigateToGamePage = async (artistName) => {
     try {
-      const { song, previewUrl } = await fetchSnippet();
-      setSong(song);
-      setSongPreviewUrl(previewUrl);
+      const { song, previewUrl } = await fetchSnippet(artistName);
       setError(null); // Clear any previous error
-
-      // Navigate to the Game component with song data
-      navigate('/game', { state: { song, songPreviewUrl: previewUrl } });
+      navigate('/game', { state: { song, songPreviewUrl: previewUrl, artistName} });
     } catch (err) {
       setError(err.message);
     }
@@ -42,29 +36,29 @@ const Dashboard = () => {
       <div className="grid-container">
       <Grid>
         <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-          <CardComponent
+          <DashboardCard
             title="Taylor Swift"
             imageSrc={tsImage}
             buttonText="Begin game!"
-            onButtonClick={handleFetchSnippet}
+            onButtonClick={() => navigateToGamePage('Taylor Swift')}
             error={error}
           />
         </Grid.Col>
         <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-          <CardComponent
+          <DashboardCard
             title="Playboi Carti"
             imageSrc={playboiCartiImage} 
             buttonText="Begin game!"
-            onButtonClick={handleFetchSnippet}
+            onButtonClick={() => navigateToGamePage('Playboi Carti')}
             error={error}
           />
         </Grid.Col>
         <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-          <CardComponent
+          <DashboardCard
             title="The Weeknd"
             imageSrc={theWeekndImage}
             buttonText="Begin game!"
-            onButtonClick={handleFetchSnippet}
+            onButtonClick={() => navigateToGamePage('The Weeknd')}
             error={error}
           />
         </Grid.Col>
