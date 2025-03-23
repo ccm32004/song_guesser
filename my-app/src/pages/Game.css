@@ -4,20 +4,21 @@
     background-position: top; /* Position the background at the top */
     background-repeat: no-repeat;
     background-attachment: fixed;
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
     text-align: center;
     padding: 20px;
+    overflow-y: auto; 
+
 }
 
 /*TODO: modularize the styling of the container because it is used in multiple pages */
 
 .game-card {
     width: 70%;
-    margin-bottom: 20px;
     margin-left: 20px;
     margin-right: 20px;
     display: flex;
@@ -25,41 +26,66 @@
     flex-direction: column;
     align-items: center;
     background-color: rgba(255, 255, 255, 0.1);
-    /* border: 1px solid rgba(255, 255, 255, 0.5); */
-    position: relative; /* Ensure the gradient overlay is positioned correctly */
+    position: relative;
 }
 
 .card-content {
     display: flex;
     width: 100%;
+    flex-direction: column;
+    /* flex-wrap: wrap;  */
+}
+
+.right-column{
+    min-height: 330px;
 }
 
 .left-column, .right-column {
-    flex: 1;
-    padding: 20px;
+    /* flex: 1; */
+    /* padding: 20px; */
+    min-width: 300px;
+    /* min-height: 380px; */
 }
 
 .left-column .stat {
     display: flex;
     align-items: center;
-    gap: 10px; /* Add space between the number and the icon */
+    gap: 10px; 
  }
   
 .left-column {
     display: flex;
-    flex-direction: column;
-    justify-content: flex-start; /* Align items to the start (top) */
-    align-items: flex-start; /* Align items to the start (left) */
-    position: relative; /* Ensure the gradient overlay is positioned correctly */
-    background: linear-gradient(rgba(72, 0, 72, 0.8), rgba(192, 72, 72, 0.7));
+    flex-direction: row;
+    align-items: center; /* Align items to the start (left) */
 }
 
+.stats-info-container{
+    flex: 1;
+    max-height: 100px; 
+    background: linear-gradient(rgba(192, 72, 72, 0.7), rgba(72, 0, 72, 0.8));
+    padding: 20px;
+}
+
+/* left-content is taken out for now because it is not longer margin */
 .left-content{
-    margin-left: 30px
+    margin-left: 30px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
-.left-column h4 {
-    text-align: left; /* Left-align the h4 elements */
+.stat {
+    justify-content: center;
+}
+
+.left-column h5 {
+    /* text-align: left;  */
+    margin: 0px !important;
+}
+
+.left-column h2 {
+    /* text-align: left;  */
+    margin: 0px !important;
 }
 
 .mode-header {
@@ -84,3 +110,25 @@
     text-align: center;
     min-height: 30px; /* Adjust the height as needed */
 }
+
+
+/* Ensure that both columns (left and right) are vertically aligned */
+@media (max-width: 768px) {
+    .game-card {
+      width: 90%; /* Expand the game card on smaller screens */
+    }
+  
+    .game-container {
+      padding: 10px; /* Reduce padding on smaller screens */
+    }
+  
+    /* Make columns stack vertically on small screens */
+    .card-content {
+      flex-direction: column;
+    }
+  
+    .left-column,
+    .right-column {
+      min-width: 100%; /* Allow the columns to take full width on smaller screens */
+    }
+  }

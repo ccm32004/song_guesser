@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Grid } from '@mantine/core'; // Import the Grid component
 import { HeaderSimple } from '../components/Header';
@@ -18,6 +18,17 @@ import theWeekndImage from  '/theWeeknd.png'; // Adjust the path to your image f
 const Dashboard = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const jwtToken = urlParams.get('token');
+    console.log('Token from URL:', jwtToken);
+
+    // Store JWT in localStorage for subsequent use
+    if (jwtToken) {
+      localStorage.setItem('jwt_token', jwtToken);
+    }
+  }, []);
 
   const navigateToGamePage = async (artistName) => {
     try {

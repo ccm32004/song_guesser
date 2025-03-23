@@ -40,25 +40,73 @@ export const fetchSnippet = async (artistName) => {
 
 
 // Function to fetch the user's profile
+// export const fetchUserProfile = async () => {
+//   try {
+//     const response = await fetch(`${API_BASE_URL}/profile`, { credentials: 'include' });
+//     if (!response.ok) {
+//       throw new Error('Network response was not ok');
+//     }
+//     const data = await response.json();
+//     return data;
+//   } catch (error) {
+//     console.error('Error fetching user profile:', error);
+//     throw error;
+//   }
+// };
+
 export const fetchUserProfile = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/profile`, { credentials: 'include' });
+    // Get the JWT token from localStorage
+    const jwtToken = localStorage.getItem('jwt_token');
+
+    // Check if the token exists
+    if (!jwtToken) {
+      throw new Error('No JWT token found. Please log in.');
+    }
+
+    // Make the API request, attaching the JWT token in the Authorization header
+    const response = await fetch(`${API_BASE_URL}/profile`, {
+      method: 'GET',  // Default GET request
+      headers: {
+        'Authorization': `Bearer ${jwtToken}`,  // Attach JWT token to the Authorization header
+        'Content-Type': 'application/json',    // Add content type header if necessary
+      },
+      // credentials: 'include',  // If you're using cookies or cross-origin authentication
+    });
+
+    // Check for successful response
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
+    
     const data = await response.json();
     return data;
+
   } catch (error) {
     console.error('Error fetching user profile:', error);
-    throw error;
+    throw error;  // Re-throw the error to handle it elsewhere if needed
   }
 };
 
+
 //fetch user emails
-//TODO: add security to this later if you're trying to get endpoints
-export const fetchUserStats = async (email) => {
+export const fetchUserStats = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/get/${email}`);
+    const jwtToken = localStorage.getItem('jwt_token');
+
+    // Check if the token exists
+    if (!jwtToken) {
+      throw new Error('No JWT token found. Please log in.');
+    }
+
+    const response = await fetch(`${API_BASE_URL}/get-user-stats`, {
+      method: 'GET',  // Default GET request
+      headers: {
+        'Authorization': `Bearer ${jwtToken}`,  
+        'Content-Type': 'application/json',    
+      },
+      // credentials: 'include',  // If you're using cookies or cross-origin authentication
+    });
     
     // Check if the response is okay
     if (!response.ok) {
@@ -78,18 +126,26 @@ export const fetchUserStats = async (email) => {
 };
 
 //update user highscore
-const updateHighScore = async (email, artistName, difficulty, score) => {
+export const updateHighScore = async (artistName, difficulty, score) => {
   try {
+    const jwtToken = localStorage.getItem('jwt_token');
+
+    // Check if the token exists
+    if (!jwtToken) {
+      throw new Error('No JWT token found. Please log in.');
+    }
+
+    console.log(`${API_BASE_URL}/update-high-score`)
     const response = await fetch(`${API_BASE_URL}/update-high-score`, {
       method: 'POST',  // Make sure to use POST for updating data
       headers: {
+        'Authorization': `Bearer ${jwtToken}`,  // Attach JWT token to the Authorization header
         'Content-Type': 'application/json', // We are sending JSON data
       },
       body: JSON.stringify({
-        email,        // User's email
-        artistName,   // Artist name
-        difficulty,   // Difficulty level (easy, medium, hard)
-        score         // The new score
+        artistName,   
+        difficulty,   
+        score         
       }),
     });
 

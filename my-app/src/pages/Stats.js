@@ -9,6 +9,8 @@ import styles from './indicator.module.css'
 import './Stats.css';
 import '@mantine/carousel/styles.css'; 
 
+//TODO: add a loading icon to this screen bestie while its getting login info lest u end up with a flickering situation
+
 const Stats = () => {
     const [userStats, setUserStats] = useState(null);
     const [error, setError] = useState(null);
@@ -70,10 +72,9 @@ const Stats = () => {
     useEffect(() => {
         const getUserData = async () => {
             const profile = await fetchUserProfile();
-            console.log( "logging", profile.email)
 
-            if (profile && profile.email) {
-                const userStats = await fetchUserStats(profile.email);
+            if (profile && profile.display_name) {
+                const userStats = await fetchUserStats();
 
                 if (userStats) {
                     setUserStats(userStats);
@@ -100,7 +101,7 @@ const Stats = () => {
                     setError('Error fetching user stats');
                 }
             } else{
-                console.log('Error fetching user profile');
+                console.log('Error fetching user profile for stats');
             }   
         }
         getUserData();

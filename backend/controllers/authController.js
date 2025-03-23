@@ -5,7 +5,6 @@ const { getUserProfile } = require('./userController');
 
 //this is for the frontend token
 const jwt = require('jsonwebtoken');
-const querystring = require('querystring');
 
 const client_id = process.env.SPOTIFY_CLIENT_ID; 
 const client_secret = process.env.SPOTIFY_CLIENT_SECRET; 
@@ -101,7 +100,8 @@ async function callback(req, res) {
   
       // Redirect to dashboard with the access token
       //TOO: do we need this access token lmao
-      return res.redirect(`http://localhost:3000/dashboard?access_token=${access_token}`);
+      console.log("token: ", token)
+      return res.redirect(`http://localhost:3000/dashboard?token=${token}`);
   
     } catch (err) {
       console.error('Error during callback process:', err);

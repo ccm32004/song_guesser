@@ -62,8 +62,8 @@ async function searchSong(query, access_token) {
 
   } catch (err) {
     console.error(err);
-    res.status(500).send('Error searching for song using spotify api');
-    }
+    throw new Error('Error fetching song from Spotify');
+  }
 }
 
 //fetch the preview URL of a track from the Spotify embed page

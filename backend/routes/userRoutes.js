@@ -1,14 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
+const { authenticateJWT } = require('../middleware/jwtToken');
 
-router.post('/create', userController.createUser);
+// router.post('/create', userController.createUser);
 
-router.post('/update-high-score', userController.updateHighScore);
+router.post('/update-high-score', authenticateJWT, userController.updateHighScore);
 
-router.get('/get/:email', userController.getUser);
+router.get('/get-user-stats', authenticateJWT, userController.getUser);
 
-router.get('/profile', userController.getProfile);
+router.get('/profile', authenticateJWT, userController.getProfile);
 
 router.delete('/deleteAllUsers', userController.deleteAllUsers);
 
