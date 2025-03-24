@@ -22,6 +22,7 @@ function generateRandomString(length) {
     return result;
 }
 
+//TOFO: fix this laterr 
 async function login(req, res) {
     const state = generateRandomString(16);
     res.cookie('spotify_auth_state', state);

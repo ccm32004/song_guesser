@@ -43,7 +43,7 @@ const Dashboard = () => {
   return (
     <div className="dashboard-container">
       <HeaderSimple className="header" />
-      <h1>Choose an artist:</h1>
+      <h1>Choose an artist</h1>
       <div className="grid-container">
       <Grid>
         <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>

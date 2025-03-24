@@ -127,8 +127,7 @@ const Game = () => {
   // Handle snippet length change
   //this should reset the streak in the new mode !
   const handleSnippetLengthChange = (value) => {
-    // Directly set snippetLength from the value passed by Radio
-    setSnippetLength(parseInt(value, 10)); // Convert string to number
+    setSnippetLength(parseInt(value, 10));
   };
 
   const handleFetchSnippet = async () => {
@@ -301,10 +300,13 @@ const Game = () => {
     setProgress(0);
   };
 
-  const skipSnippet = async () => {
-    setValidationMessage("The song was: " + song.title);
+  const skipSnippet = async (isNewDifficulty) => {
+    // Determine the loading message based on the condition
+    const loadingMessage = isNewDifficulty 
+        ? `Setting new difficulty: \n${difficultyMap[snippetLength]}` 
+        : `Answer: \n${song.title}`;
 
-    setLoadingMessage(`Answer:\n${song.title}\n\nSkipping to next song...`);
+    setLoadingMessage(loadingMessage);
 
     setIsLoadingNextSong(true); // Set loading next song state to true
     setTimeout(async () => {
@@ -444,7 +446,7 @@ const Game = () => {
                   </Center>
 
                   <Button
-                    onClick={skipSnippet}
+                    onClick={() => skipSnippet(false)}
                     variant="outline"
                     color="gray"
                     className="skip-button"
@@ -504,20 +506,31 @@ const Game = () => {
       </Card>
       <Modal
         opened={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title="Settings"
+        onClose={() => {setIsModalOpen(false); skipSnippet(true)}}
+        title="Choose the snippet length:"
         centered
+        className="centered-modal-content"
       >
-        <p>Choose the snippet length:</p>
+        {/* <p>Choose the snippet length:</p> */}
         <Radio.Group
           value={snippetLength.toString()} // Convert the number to string for Radio values
           onChange={handleSnippetLengthChange} // Call handler on change
           name="snippet-length"
+          className="centered-radio-group" 
         >
-          <Radio value="3" label="Easy" />
-          <Radio value="2" label="Medium" />
-          <Radio value="1" label="Hard" />
+          <Radio value="3" label="Easy (3 seconds)" />
+          <Radio value="2" label="Medium (2 seconds)" />
+          <Radio value="1" label="Hard (1 second)" />
         </Radio.Group>
+
+        <Button
+          onClick={() => {setIsModalOpen(false); skipSnippet(true)}}
+          style={{ marginTop: "20px" }}
+        >
+          Close
+        </Button>
+
+
       </Modal>
     </div>
   );

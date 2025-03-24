@@ -29,3 +29,17 @@
     /* background-color: var(--mantine-color-violet-filled); */
     color: var(--mantine-color-white);
   }
+
+  .mantine-Menu-dropdown{
+    background-color: transparent !important;
+    color: var(--mantine-color-gray-7) !important;
+  }
+
+  .mantine-Menu-item:hover{
+    background-color:  #2f2539 !important;
+    color: white !important;
+  }
+
+  .mantine-Menu-item:focus{
+    color: var(--mantine-color-gray-4) !important;
+  }

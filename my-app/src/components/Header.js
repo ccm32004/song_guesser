@@ -3,7 +3,7 @@ import { Burger, Container, Group, Menu, Avatar, UnstyledButton, Text, Title } f
 import { useDisclosure } from '@mantine/hooks';
 import { IconChevronDown, IconLogout, IconLogin } from '@tabler/icons-react';
 import { IconMusic } from '@tabler/icons-react';
-import { fetchUserProfile } from '../utils/api';
+import { fetchUserProfile, logout } from '../utils/api';
 import { useNavigate, Link, useLocation} from 'react-router-dom';
 import './Header.css'; // Correctly import the CSS file
 
@@ -11,7 +11,7 @@ const links = [
   { link: '/login', label: 'Home' },
   { link: '/dashboard', label: 'Game' },
   { link: '/stats', label: 'My Stats' },
-  { link: '/about', label: 'About' },
+  // { link: '/about', label: 'About' },
 ];
 
 export function HeaderSimple() {
@@ -82,7 +82,7 @@ export function HeaderSimple() {
               <Menu.Dropdown>
                 <Menu.Item
                   icon={<IconLogout size={16} />}
-                  onClick={() => setIsLoggedIn(false)} // Logout logic
+                  onClick={() => logout()} // Logout logic
                 >
                   Logout
                 </Menu.Item>
@@ -91,8 +91,8 @@ export function HeaderSimple() {
           ) : (
             <UnstyledButton onClick={() => navigate('/login')}> {/* Login logic */}
               <Group>
-                <IconLogin size={20} />
-                <Text>Login</Text>
+                <IconLogin size={15} />
+                <Text size="sm">Login</Text>
               </Group>
             </UnstyledButton>
           )}

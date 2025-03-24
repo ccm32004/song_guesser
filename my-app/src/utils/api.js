@@ -54,6 +54,11 @@ export const fetchSnippet = async (artistName) => {
 //   }
 // };
 
+export const logout = () => {
+  localStorage.removeItem('jwt_token');
+  window.location.reload(); 
+}
+
 export const fetchUserProfile = async () => {
   try {
     // Get the JWT token from localStorage

@@ -47,6 +47,14 @@ const customTheme = createTheme({
         },
       },
     },
+    Radio: {
+      styles: (theme) => ({
+        root: {
+            '--radio-icon-size': '9px',
+            '--radio-icon-color': '#5b4f65'
+        },
+      }),
+    },
   },
 });
 

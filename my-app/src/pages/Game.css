@@ -62,7 +62,7 @@
 .stats-info-container{
     flex: 1;
     max-height: 100px; 
-    background: linear-gradient(rgba(192, 72, 72, 0.7), rgba(72, 0, 72, 0.8));
+    background: linear-gradient(rgba(192, 72, 72, 0.4), rgba(72, 0, 72, 0.3));
     padding: 20px;
 }
 
@@ -99,7 +99,7 @@
 
 .play-music-button:hover {
     background: #916691 !important; /* Reverse gradient on hover */
-  }
+}
   
 .skip-button:hover {
     background-color: #5b4f65 !important; /* Change background color on hover */
@@ -111,6 +111,42 @@
     min-height: 30px; /* Adjust the height as needed */
 }
 
+.mantine-Modal-title{
+    color: #f1e8f7 !important;
+    font-weight: bold !important;
+}
+
+.mantine-Radio-label{
+    color: #f1e8f7 !important;
+}
+
+.mantine-Modal-header{
+    padding-left: 40px !important;
+    padding-right: 40px !important;
+    padding-top: 30px !important;
+    background-color: #21152b !important;
+}
+.mantine-Modal-body {
+    padding-left: 40px !important;
+    padding-right: 40px !important;
+    padding-bottom: 40px !important;
+    background-color: #21152b !important;
+}
+
+.mantine-Radio-root {
+    margin-bottom: 10px; /* Adjust the value as per your need */
+}
+
+.mantine-Modal-close{
+    color: #f1e8f7 !important;
+}
+
+.mantine-Modal-close:hover{
+    color: #292929 !important;
+}
+/* .mantine-Radio-radio{
+    background-color: #f1f1f1 !important;
+} */
 
 /* Ensure that both columns (left and right) are vertically aligned */
 @media (max-width: 768px) {

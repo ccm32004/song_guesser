@@ -16,7 +16,7 @@
   .card-component img {
     width: 100%; /* Make the image span the full width of the card */
     height: auto;
-    object-fit: cover; /* Ensure the image keeps its aspect ratio */
+    object-fit: cover; 
     margin-bottom: 0; /* Remove bottom margin */
     border-top-left-radius: 4px; /* Match the card's border radius */
     border-top-right-radius: 4px; /* Match the card's border radius */
