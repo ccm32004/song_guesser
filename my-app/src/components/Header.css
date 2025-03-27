@@ -27,7 +27,11 @@
   
   .link.active {
     /* background-color: var(--mantine-color-violet-filled); */
-    color: var(--mantine-color-white);
+    color: #f1e8f7;
+  }
+  
+  .link:hover {
+    color: #f1e8f7;
   }
 
   .mantine-Menu-dropdown{

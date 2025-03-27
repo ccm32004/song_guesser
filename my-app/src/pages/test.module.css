@@ -3,8 +3,14 @@
     color: white !important;
     padding: 0 3em !important;
     text-align: center !important;
+    &::placeholder {
+      color: rgb(230, 229, 229) !important;
+    }
   }
-  
+
+.input:focus{
+  box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.3);
+}
 .dropdown {
   background-color: #44354f !important;
   border-color: #73687b !important;

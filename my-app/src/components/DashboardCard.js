@@ -3,6 +3,7 @@ import { Card, Button } from '@mantine/core';
 import './DashboardCard.css'; // Import the CSS file
 
 const DashboardCard = ({ title, imageSrc, buttonText, onButtonClick, error }) => {
+
   return (
     <Card shadow="sm" padding="md" radius= "md" className="card-component">
     <Card.Section className="card-section">
@@ -13,7 +14,7 @@ const DashboardCard = ({ title, imageSrc, buttonText, onButtonClick, error }) =>
         <Button color="white" variant="outline" onClick={onButtonClick}>
           {buttonText}
         </Button>
-        {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
+        {error && <p style={{ color: 'white', marginTop: '5px' }}>{error}</p>}
       </div>
     </Card>
   );

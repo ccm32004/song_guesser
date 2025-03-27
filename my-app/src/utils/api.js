@@ -89,7 +89,6 @@ export const fetchUserProfile = async () => {
 
   } catch (error) {
     console.error('Error fetching user profile:', error);
-    throw error;  // Re-throw the error to handle it elsewhere if needed
   }
 };
 

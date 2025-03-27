@@ -20,20 +20,20 @@ const Login = () => {
       <HeaderSimple className = "header"/>
       <Container size="xs" className="login-content">
         <Title>Welcome</Title>
-        <p> Press button below to begin!</p>
+        <p> Test your knowledge of your favourite artists</p>
         <div className="button-group">
-          <Button
+        <Button
+            onClick={handlePlayWithoutLogin} //TODO: fix this it doesn't hover properly for some reason
+            className="play-button"
+          >
+            Play Now
+          </Button>
+          {/* <Button
             onClick={handleLogin}
             className="login-button"
           >
             Login with Spotify
-          </Button>
-          <Button
-            onClick={handlePlayWithoutLogin} //TODO: fix this it doesn't hover properly for some reason
-            className="play-button"
-          >
-            Play w/o Login
-          </Button>
+          </Button> */}
         </div>   
       </Container>
     </div>

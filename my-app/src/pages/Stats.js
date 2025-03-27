@@ -3,10 +3,10 @@ import { HeaderSimple } from '../components/Header';
 import {Button, Loader} from '@mantine/core';
 import { Carousel } from '@mantine/carousel'; // Import Carousel from Mantine
 import { CompositeChart } from '@mantine/charts';
+import { IconBrandSpotifyFilled } from '@tabler/icons-react';
 import { deleteAllUsers } from '../utils/api';
 import {fetchUserProfile, fetchUserStats} from '../utils/api';
 import StatsCard from '../components/StatsCard'; // Import the StatsCard component
-import styles from './indicator.module.css'
 import './Stats.css';
 import '@mantine/carousel/styles.css'; 
 
@@ -147,8 +147,11 @@ const Stats = () => {
     if (loading) {
         // Show loading spinner while data is being fetched
         return (
-            <div className="loading-container">
-                <Loader size="xl" />
+            <div className="stats-container">
+                <HeaderSimple />
+                <div className="loading-container">
+                    <Loader size="xl" />
+                </div>
             </div>
         );
     }
@@ -156,7 +159,6 @@ const Stats = () => {
     return (
         <div className="stats-container">
             <HeaderSimple />
-
             {error ? (
                 <div>{error}</div>
             ) : userStats ? (
@@ -165,12 +167,7 @@ const Stats = () => {
                     <Carousel
                         className="carousel-container"
                         withIndicators
-                        slideSize="75%"
-                        classNames={{
-                            indicators: styles.indicators,
-                            indicator: styles.indicator,
-                            controls: styles.controls,
-                        }}>
+                        slideSize="75%">
                         {artistsData.map((data, index) => (
                             <Carousel.Slide key={index} className="carousel-slide">
                                 <StatsCard
@@ -209,7 +206,8 @@ const Stats = () => {
                             Please log in to view your stats!
                         </div>
                         <Button className="login-button" onClick={handleLogin}>
-                            Login with Spotify
+                            Login with Spotify 
+                            <IconBrandSpotifyFilled size={20} className="icon" />
                         </Button>
                     </div>
                 </div>

@@ -27,6 +27,26 @@ const createUser = async (displayName, email) => {
       artists: []  // Initialize with an empty array for artists
     });
 
+    const baseHighScores = {
+      easy: { score: 0 },
+      medium: { score: 0 },
+      hard: { score: 0 }
+    };
+    
+    // Array of artist names (this can be dynamically generated or modified)
+    const artistNames = ["Taylor Swift", "Playboi Carti", "The Weeknd"];
+    
+    // Loop through artist names and create artists dynamically
+    artistNames.forEach(artistName => {
+      const artist = {
+        artistName,
+        highScores: baseHighScores // Use the same highScores structure for all artists
+      };
+      
+      // Push the new artist into the artists array
+      newUser.artists.push(artist);
+    });
+
     // Save the new user
     const savedUser = await newUser.save();
     return { status: 201, user: savedUser }; 

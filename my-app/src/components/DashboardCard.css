@@ -6,11 +6,12 @@
     padding: 0; /* Remove padding to ensure the image spans the full width */
     position: relative;
     overflow: hidden;
+    margin: 10px; 
   }
 
   .card-component:hover {
-    transform: scale(1.02); /* Slightly increase the scale */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Increase the shadow on hover */
+    transform: scale(1.02); 
+    box-shadow: 0 8px 16px rgba(255, 255, 255, 0.3); 
   }
   
   .card-component img {
@@ -37,7 +38,7 @@
   }
   
   .card-component-content {
-    padding: 30px; /* Add padding to the content area */
+    padding: 30px; 
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -50,11 +51,19 @@
     margin-top: 0;
   }
   
-  .card-component button {
-    padding: 10px;
-  }
   
   .card-component button:hover {
     background-color: #5b4f65 !important;
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
   }
+
+ /* these control the appearance of the buttons*/
+ .card-component button {
+    opacity: 0; 
+    transition: opacity 0.3s ease-in-out; 
+  }
+
+  .card-component:hover button {
+      opacity: 1;
+  } 
+

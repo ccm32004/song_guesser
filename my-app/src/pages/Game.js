@@ -17,6 +17,7 @@ import {
   IconFlameFilled,
   IconArrowNarrowLeft,
   IconSettings,
+  IconLeaf,
 } from "@tabler/icons-react"; // Play Icon
 import {
   fetchSnippet,
@@ -62,17 +63,24 @@ const Game = () => {
   const [loggedIn, setLoggedIn] = useState(false); //TODO: change this to false later
   const [userHighScore, setUserHighScore] = useState(0);
 
+  //state variable to track whether the track is started or not (for the ring progress)
+  const [isTrackStarted, setIsTrackStarted] = useState(false);
+  const [isPreviewUrlChanged, setIsPreviewUrlChanged] = useState(true);
+
   const difficultyMap = {
     3: "easy", // Easy = 3 seconds
     2: "medium", // Medium = 2 seconds
     1: "hard", // Hard = 1 second
   };
 
+   //TODO: remove the functionality of the play button 
+
+  //only run if the song preview url changes
   useEffect(() => {
-    if (audioRef.current && songPreviewUrl) {
-      //audioRef.current.src = songPreviewUrl;
-      //audioRef.current.load();
-      //make the player reflect the current state of the audio element
+    console.log("here is the song preview url");
+    console.log(songPreviewUrl);
+    console.log("checking if track has started: ", isTrackStarted);
+    if (audioRef.current && songPreviewUrl && isTrackStarted & isPreviewUrlChanged) {
 
       setProgress(0);
       if (intervalId) {
@@ -89,13 +97,13 @@ const Game = () => {
               audioRef.current.pause();
             }
             handleAudioEnded();
-            return 100;
+            return 0;
           }
-          return prevProgress + 0.5;
+          return prevProgress + 0.85; 
         });
       }, snippetLength * 10);
     }
-  }, [songPreviewUrl]);
+  }, [isTrackStarted]);
 
   useEffect(() => {
     const fetchSuggestions = async () => {
@@ -130,10 +138,16 @@ const Game = () => {
     setSnippetLength(parseInt(value, 10));
   };
 
+  const handlePlay = () => {
+    console.log("audio has started playing");
+    setIsTrackStarted(true);
+  };
+
   const handleFetchSnippet = async () => {
     try {
       const { song, previewUrl } = await fetchSnippet(artistName);
       setSong(song);
+      setIsPreviewUrlChanged(true);
       setSongPreviewUrl(previewUrl);
       setError(null); // Clear any previous error
     } catch (err) {
@@ -150,7 +164,7 @@ const Game = () => {
     // Reset progress when starting a new snippet
     setProgress(0);
     setIsPlaying(true);
-    console.log("playing snippet");
+    console.log("playing snippet after you pressed play");
 
     if (audioRef.current) {
       const audio = audioRef.current;
@@ -168,19 +182,19 @@ const Game = () => {
             // Increment play count, ensures it updated based on most recent state value, rather than the version existing in the render
             //typically it is no applied immediately, rahter it is scheduled to applied in the next render (which is why it is one behind)
 
-            console.log("playcount after autoplay works: " + playCount); // Increment play count
-
             //this is the part that controls the ring progress, and pauses after 3 seconds
             const id = setInterval(() => {
-              console.log("entered interval : " + progress);
+
+              //issue is that this is entering twice !!
+              console.log("entered interval : " + progress); //TODO:  compare how many times autoplay enters interval vs this play button!
               setProgress((prevProgress) => {
                 if (prevProgress >= 100) {
                   clearInterval(id); // Stop the interval once it reaches 100%
                   audio.pause();
                   handleAudioEnded();
-                  return 100;
+                  return 0;
                 }
-                return prevProgress + 1; // Increment progress by 1
+                return prevProgress + 0.55; // Increment progress by 1
               });
             }, snippetLength * 10); // Adjust the speed by changing the interval time (ms)
 
@@ -298,6 +312,8 @@ const Game = () => {
   const handleAudioEnded = () => {
     setIsPlaying(false);
     setProgress(0);
+    setIsTrackStarted(false);
+    setIsPreviewUrlChanged(false);
   };
 
   const skipSnippet = async (isNewDifficulty) => {
@@ -330,7 +346,7 @@ const Game = () => {
 
   return (
     <div className="game-container">
-      <HeaderSimple className="header" />
+      {/* <HeaderSimple className="header" /> */}
       <div className="mode-header">
         <IconArrowNarrowLeft size={24} onClick={handleBackClick} />
         <h2>{artistName} Mode</h2>
@@ -400,6 +416,7 @@ const Game = () => {
                     controls
                     style={{ display: "none" }} // Hide the audio player
                     autoPlay
+                    onPlay={handlePlay}
                   >
                     <source src={songPreviewUrl} type="audio/mpeg" />
                     Your browser does not support the audio tag.
@@ -424,10 +441,10 @@ const Game = () => {
                       <ActionIcon
                         size={60}
                         className="play-music-button"
-                        color="violet"
+                        // color="violet"
                         variant="filled"
-                        style={{
-                          background: "#6d336d",
+                        style={{ //tODO: add a cool hover effect
+                          // background: "white", //"#6d336d"
                           position: "absolute",
                           top: "50%",
                           left: "50%",
@@ -438,8 +455,9 @@ const Game = () => {
                         disabled={playCount >= 1} // Disable button after 2 plays
                       >
                         <IconPlayerPlayFilled
-                          size={24}
-                          style={{ color: "e8e6e9" }}
+                          size={30}
+                          className="play-icon"
+                          style={{ color: "white" }} //"e8e6e9"
                         />
                       </ActionIcon>
                     </div>
@@ -473,6 +491,7 @@ const Game = () => {
                   >
                     <Autocomplete
                       clearable //TODO address this console error
+                      autoFocus
                       value={inputTitle}
                       onChange={setInputTitle}
                       variant="filled"
@@ -484,6 +503,7 @@ const Game = () => {
                         position: "bottom",
                         middlewares: { flip: false, shift: false },
                         offset: 0,
+                        transitionProps: { transition: 'scale-y', duration: 150 },
                       }}
                       classNames={{
                         input: styles.input, // Apply the CSS class for input
@@ -507,7 +527,12 @@ const Game = () => {
       <Modal
         opened={isModalOpen}
         onClose={() => {setIsModalOpen(false); skipSnippet(true)}}
-        title="Choose the snippet length:"
+        title= {
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <IconLeaf size={24} style={{ marginRight: '8px' }} /> {/* Tabler Leaf Icon */}
+            Choose the snippet length
+          </div>
+        }
         centered
         className="centered-modal-content"
       >
@@ -529,7 +554,6 @@ const Game = () => {
         >
           Close
         </Button>
-
 
       </Modal>
     </div>

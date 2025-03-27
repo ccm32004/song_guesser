@@ -29,6 +29,7 @@
     flex-direction: row; /* Arrange buttons in a row */
     gap: 10px; /* Add space between the buttons */
     margin-top: 20px;
+    justify-content: center;
   }
 
   .login-button:hover {
@@ -37,7 +38,8 @@
   }
 
   .play-button {
-    background-color: transparent;
+    margin-top: 10px;
+    /* background-color: rgba(124, 105, 139, 0.5)!important; */
     border-color: #8a8191;
     color: white;
   }
@@ -45,4 +47,29 @@
   .play-button:hover {
     background-color:  #5b4f65 !important;
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); 
+  }
+
+
+  /* these contorl transition drop down the welcome portion */
+  .login-content {
+    opacity: 0;
+    transform: translateY(20px); /* Start from 20px below */
+    animation: fadeInUp 0.6s ease-out forwards; /* The animation */
+  }
+  
+  /* Optional staggered effect for specific elements inside */
+  .login-content.staggered {
+    animation: fadeInUp 0.8s ease-out forwards;
+    animation-delay: 0.2s; /* Slight delay for staggered effect */
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
