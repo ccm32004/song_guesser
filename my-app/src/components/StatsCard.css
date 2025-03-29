@@ -7,7 +7,7 @@
     margin: 0;
   }
 
-.row {
+ .row {
     display: flex;
     gap: 20px; 
     justify-content: space-between;
@@ -36,7 +36,7 @@
     text-align: center;
     font-size: 18px;
     font-weight: bold;
-    margin-top: 8px;
+    margin-top: 0px;
   }
   
   .chart-column {
@@ -70,11 +70,14 @@
   }
   
   .streak-heading {
+    margin-top: 0px;
     font-size: 1.2em;
     font-weight: bold;
+    margin-bottom: 40px;
   }
   
   .streak-value {
     font-size: 2.5em;
     font-weight: bold;
+    margin-bottom: 5px;
   }  

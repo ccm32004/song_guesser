@@ -28,7 +28,7 @@ const customTheme = createTheme({
           color: 'white',
           '&:hover': {
             color: 'white',
-            backgroundColor: theme.colors.brand[8],
+            backgroundColor: ' #5b4f65',
           },
         },
       }),

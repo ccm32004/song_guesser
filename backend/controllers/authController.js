@@ -111,7 +111,6 @@ async function callback(req, res) {
     }
 }
 
-//TODO: actually use this when the accesstoken parameter doesn't work and returns error 404
 function refreshToken (req, res) {
     const refresh_token = req.session.refresh_token;
   

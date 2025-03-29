@@ -14,7 +14,7 @@ const DashboardCard = ({ title, imageSrc, buttonText, onButtonClick, error }) =>
         <Button color="white" variant="outline" onClick={onButtonClick}>
           {buttonText}
         </Button>
-        {error && <p style={{ color: 'white', marginTop: '5px' }}>{error}</p>}
+        {error && <p style={{ color: 'white', marginTop: '10px', fontSize: '12px'}}>{error}</p>}
       </div>
     </Card>
   );

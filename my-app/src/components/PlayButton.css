@@ -1,0 +1,16 @@
+.play-music-button {
+    background: linear-gradient(rgba(192, 72, 72, 0.6), rgba(72, 0, 72, 0.6)) !important;
+    box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.3)
+}
+
+.play-music-button:hover {
+    box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.4);
+}
+
+.play-music-button:active {
+    background: linear-gradient(rgba(192, 72, 72, 0.3), rgba(72, 0, 72, 0.15)) !important; /* Reverse gradient on hover #916691 */
+}
+
+.play-music-button:hover .play-icon {
+    color: white !important; /* Change icon color on hover */
+}

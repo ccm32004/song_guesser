@@ -1,6 +1,6 @@
 .dashboard-container {
-    background-image: url('/purple2.png'); /* Adjust the path if needed */
-    background-size: 100% 260%; /* Scale the background to twice its height */
+    background-image: url('/purple2.png'); /* TODO: make the global background a shade of purple so it matches*/
+    background-size: 100% 260%; 
     background-position:  top left; /* Position the background at the top */
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -11,26 +11,26 @@
     align-items: center;
     text-align: center;
     padding: 20px;
-    overflow-y: auto; /* Allow vertical scrolling */
+    overflow-y: auto; 
 }
 
 .grid-container {
-    width: 70%; /* Set the width of the grid container to 70% */
-    margin: 0 auto; /* Center the grid container */
+    width: 70%; 
+    margin: 0 auto; 
   }
 
 .card-grid {
     display: flex;
     flex-wrap: wrap;
     gap: 40px;
-    justify-content: center; /* Center the cards */
+    justify-content: center;
     height: 80%;
     width: 70%;
   }
   
   .card-grid > * {
-    flex: 1 1 calc(33.333% - 20px); /* Three columns with equal width */
-    max-width: calc(33.333% - 20px); /* Ensure the cards don't exceed the column width */
+    flex: 1 1 calc(33.333% - 20px);
+    max-width: calc(33.333% - 20px); 
     box-sizing: border-box;
     height: 80%;
   }

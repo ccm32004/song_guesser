@@ -32,19 +32,19 @@
 .card-content {
     display: flex;
     width: 100%;
-    flex-direction: column;
-    /* flex-wrap: wrap;  */
 }
 
 .right-column{
     min-height: 330px;
+    justify-content: center; /* Align items to the start (top) */
+    align-items: center; /* Align items to the start (left) */
+    display: flex;
+    flex-direction: column;
 }
 
 .left-column, .right-column {
-    /* flex: 1; */
-    /* padding: 20px; */
+    flex: 1;
     min-width: 300px;
-    /* min-height: 380px; */
 }
 
 .left-column .stat {
@@ -55,22 +55,18 @@
   
 .left-column {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    justify-content: center; /* Align items to the start (top) */
     align-items: center; /* Align items to the start (left) */
+    position: relative; /* Ensure the gradient overlay is positioned correctly */
+    background: linear-gradient(rgba(72, 0, 72, 0.8), rgba(192, 72, 72, 0.7));
 }
 
 .stats-info-container{
     flex: 1;
-    max-height: 100px; 
-    background: linear-gradient(rgba(192, 72, 72, 0.4), rgba(72, 0, 72, 0.3));
     padding: 20px;
-}
-
-/* left-content is taken out for now because it is not longer margin */
-.left-content{
-    margin-left: 30px;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
 }
 
@@ -97,23 +93,6 @@
     width: 68%;
 }
 
-.play-music-button {
-    background: linear-gradient(rgba(192, 72, 72, 0.4), rgba(72, 0, 72, 0.3)) !important;
-    box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.3)
-}
-
-.play-music-button:hover {
-    box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.4);
-}
-
-.play-music-button:active {
-    background: linear-gradient(rgba(192, 72, 72, 0.3), rgba(72, 0, 72, 0.15)) !important; /* Reverse gradient on hover #916691 */
-}
-
-.play-music-button:hover .play-icon {
-    color: white !important; /* Change icon color on hover */
-}
-  
 .skip-button:hover {
     background-color: #5b4f65 !important; /* Change background color on hover */
     border-color: #73687b; /* Change border color on hover */
@@ -157,6 +136,10 @@
 
 .mantine-Modal-close:hover{
     color: #292929 !important;
+    background-color: #8c8195 !important;
+}
+
+.close-button:hover{
     background-color: #8c8195 !important;
 }
 /* .mantine-Radio-radio{

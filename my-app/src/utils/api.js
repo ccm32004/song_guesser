@@ -1,4 +1,5 @@
-const API_BASE_URL = 'http://localhost:8888' //todo: put this in an env variable
+// const API_BASE_URL = 'http://localhost:8888' //todo: put this in an env variable
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 //this is for autocomplete
 export const fetchSongTitleSuggestions = async (artistName) => {
@@ -89,6 +90,7 @@ export const fetchUserProfile = async () => {
 
   } catch (error) {
     console.error('Error fetching user profile:', error);
+    throw error;
   }
 };
 

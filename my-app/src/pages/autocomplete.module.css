@@ -11,13 +11,13 @@
 .input:focus{
   box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.3);
 }
+
 .dropdown {
   background-color: #44354f !important;
   border-color: #73687b !important;
   margin-top: 0 !important;
 }
 
-/* Example of targeting the autocomplete item */
 .option:hover{
   background-color: #4b3b5b !important;
 }

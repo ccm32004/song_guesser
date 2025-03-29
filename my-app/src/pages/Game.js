@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
-  RingProgress,
   Center,
   ActionIcon,
   Autocomplete,
@@ -12,7 +11,6 @@ import {
   Radio,
 } from "@mantine/core";
 import {
-  IconPlayerPlayFilled,
   IconBrandDeezer,
   IconFlameFilled,
   IconArrowNarrowLeft,
@@ -27,7 +25,10 @@ import {
 } from "../utils/api"; // Import the fetchSnippet function
 import { HeaderSimple } from "../components/Header";
 import "./Game.css"; // Import the CSS file
-import styles from "./test.module.css";
+import styles from "./autocomplete.module.css";
+
+//components imported
+import PlayButton from "../components/PlayButton";
 
 const Game = () => {
   const location = useLocation();
@@ -75,6 +76,25 @@ const Game = () => {
 
    //TODO: remove the functionality of the play button 
 
+  function setProgressIndicator() {
+    console.log("setting interval");
+    setProgress(0);
+    const id = setInterval(() => {
+      setProgress((prevProgress) => {
+        if (prevProgress >= 100) {
+          clearInterval(id); // Stop the interval once it reaches 100%
+          if (audioRef.current) {
+            audioRef.current.pause();
+          }
+          handleAudioEnded();
+          return 100;
+        }
+        return prevProgress + 0.85; 
+      });
+    }, snippetLength * 10);
+    setIntervalId(id);
+  }
+
   //only run if the song preview url changes
   useEffect(() => {
     console.log("here is the song preview url");
@@ -82,26 +102,10 @@ const Game = () => {
     console.log("checking if track has started: ", isTrackStarted);
     if (audioRef.current && songPreviewUrl && isTrackStarted & isPreviewUrlChanged) {
 
-      setProgress(0);
       if (intervalId) {
         clearInterval(intervalId);
       }
-      //TODO: refactor laterr
-
-      console.log("setting interval");
-      const id = setInterval(() => {
-        setProgress((prevProgress) => {
-          if (prevProgress >= 100) {
-            clearInterval(id); // Stop the interval once it reaches 100%
-            if (audioRef.current) {
-              audioRef.current.pause();
-            }
-            handleAudioEnded();
-            return 0;
-          }
-          return prevProgress + 0.85; 
-        });
-      }, snippetLength * 10);
+      setProgressIndicator();
     }
   }, [isTrackStarted]);
 
@@ -132,8 +136,6 @@ const Game = () => {
     checkLoginStatus();
   }, []);
 
-  // Handle snippet length change
-  //this should reset the streak in the new mode !
   const handleSnippetLengthChange = (value) => {
     setSnippetLength(parseInt(value, 10));
   };
@@ -149,7 +151,7 @@ const Game = () => {
       setSong(song);
       setIsPreviewUrlChanged(true);
       setSongPreviewUrl(previewUrl);
-      setError(null); // Clear any previous error
+      setError(null); 
     } catch (err) {
       setError(err.message);
     }
@@ -161,8 +163,6 @@ const Game = () => {
       return;
     }
 
-    // Reset progress when starting a new snippet
-    setProgress(0);
     setIsPlaying(true);
     console.log("playing snippet after you pressed play");
 
@@ -182,23 +182,7 @@ const Game = () => {
             // Increment play count, ensures it updated based on most recent state value, rather than the version existing in the render
             //typically it is no applied immediately, rahter it is scheduled to applied in the next render (which is why it is one behind)
 
-            //this is the part that controls the ring progress, and pauses after 3 seconds
-            const id = setInterval(() => {
-
-              //issue is that this is entering twice !!
-              console.log("entered interval : " + progress); //TODO:  compare how many times autoplay enters interval vs this play button!
-              setProgress((prevProgress) => {
-                if (prevProgress >= 100) {
-                  clearInterval(id); // Stop the interval once it reaches 100%
-                  audio.pause();
-                  handleAudioEnded();
-                  return 0;
-                }
-                return prevProgress + 0.55; // Increment progress by 1
-              });
-            }, snippetLength * 10); // Adjust the speed by changing the interval time (ms)
-
-            setIntervalId(id);
+            setProgressIndicator();
           })
           .catch((error) => {
             console.error("Auto-play was prevented:", error);
@@ -222,17 +206,17 @@ const Game = () => {
   const validateTitle = () => {
     var normalizedSongTitle = song.title.toLowerCase().replace(/\s+/g, "");
     normalizedSongTitle = normalizedSongTitle.replace( /\(taylor'sversion\)/g,"");
-    normalizedSongTitle = normalizedSongTitle.replace(/\(feat\..*?\)/g, ""); // Remove (feat. [artist])
-    normalizedSongTitle = normalizedSongTitle.replace(/\(.*?version\)/g, ""); // Remove (Live Version)
+    normalizedSongTitle = normalizedSongTitle.replace(/\(feat\..*?\)/g, ""); 
+    normalizedSongTitle = normalizedSongTitle.replace(/\(.*?version\)/g, ""); 
     normalizedSongTitle = normalizedSongTitle.replace(".", "");
     normalizedSongTitle = normalizedSongTitle.replace(",", "");
     normalizedSongTitle = normalizedSongTitle.replace(" ", "");
     normalizedSongTitle = normalizedSongTitle.split("-")[0];
-    normalizedSongTitle = normalizedSongTitle.replace(/\(.*?\)/g, ""); // Remove anything in brackets
+    normalizedSongTitle = normalizedSongTitle.replace(/\(.*?\)/g, ""); 
     normalizedSongTitle = normalizedSongTitle.replace(/[^a-zA-Z0-9]/g, ""); // Remove special characters
 
     var normalizedInputTitle = inputTitle.toLowerCase().replace(/\s+/g, "");
-    normalizedInputTitle = normalizedInputTitle.replace(/[^a-zA-Z0-9]/g, ""); // Remove special characters
+    normalizedInputTitle = normalizedInputTitle.replace(/[^a-zA-Z0-9]/g, ""); // Remove special characters from input titles
 
     console.log("Song title:", normalizedSongTitle);
     console.log("Input title:", normalizedInputTitle);
@@ -240,19 +224,21 @@ const Game = () => {
     if (normalizedInputTitle === normalizedSongTitle) {
       console.log("correct");
       setLoadingMessage("Correct! Loading next song...");
-      setIsLoadingNextSong(true); // Set loading next song state to true
+      setIsLoadingNextSong(true); 
+      
       setTimeout(async () => {
         console.log("resetting game");
 
-        setPlayCount(0); // Reset play count immediately
         await incrementCurrentStreak();
-        setInputTitle(""); // Reset input title
-        setValidationMessage(""); // Reset validation message
-
+        setPlayCount(0); 
+        setInputTitle(""); 
+        setValidationMessage(""); 
         await handleFetchSnippet();
         setIsLoadingNextSong(false);
         clearInterval;
       }, 1300);
+
+
     } else {
       console.log("wrong");
       setValidationMessage("Incorrect. Try again!");
@@ -263,18 +249,12 @@ const Game = () => {
   };
 
   const incrementCurrentStreak = async () => {
-    // Get the current streak value before proceeding
     const updatedStreak = currentStreak + 1;
 
-    console.log("current streak: " + updatedStreak);
-    console.log("user high score: " + userHighScore);
-
-    // Check if we are logged in and if the new streak is higher than the user's high score
     if (loggedIn && updatedStreak > userHighScore) {
       console.log("updating high score");
 
       try {
-        // Call async function to update the high score
         const response = await updateHighScore(
           artistName,
           difficultyMap[snippetLength],
@@ -290,13 +270,12 @@ const Game = () => {
           setCurrentStreak(updatedStreak);
           console.log("current streak updated: " + currentStreak);
         } else {
-          alert(response.message); // Show error message if any
+          alert(response.message); 
         }
       } catch (error) {
         console.error("Error updating high score:", error);
       }
     } else {
-      // Just increment the streak if no need to update high score
       console.log("current streak updated wo login: " + updatedStreak);
       setCurrentStreak(updatedStreak);
     }
@@ -317,27 +296,28 @@ const Game = () => {
   };
 
   const skipSnippet = async (isNewDifficulty) => {
-    // Determine the loading message based on the condition
     const loadingMessage = isNewDifficulty 
         ? `Setting new difficulty: \n${difficultyMap[snippetLength]}` 
         : `Answer: \n${song.title}`;
 
     setLoadingMessage(loadingMessage);
 
-    setIsLoadingNextSong(true); // Set loading next song state to true
+    setIsLoadingNextSong(true); 
+
+    
     setTimeout(async () => {
-      setInputTitle(""); // Clear the input field
-      setPlayCount(0); // Reset play count
+      setInputTitle(""); 
+      setPlayCount(0); 
       setCurrentStreak(0);
-      setValidationMessage(""); // Reset validation message
-      await handleFetchSnippet(); // Fetch a new snippet
-      setIsLoadingNextSong(false); // Reset loading next song state after 2 seconds
+      setValidationMessage(""); 
+      await handleFetchSnippet(); 
+      setIsLoadingNextSong(false); 
       clearInterval;
     }, 1300);
   };
 
   const handleBackClick = () => {
-    navigate(-1); // Navigate to the previous page
+    navigate(-1); 
   };
 
   const handleGearClick = () => {
@@ -346,7 +326,7 @@ const Game = () => {
 
   return (
     <div className="game-container">
-      {/* <HeaderSimple className="header" /> */}
+      <HeaderSimple className="header" />
       <div className="mode-header">
         <IconArrowNarrowLeft size={24} onClick={handleBackClick} />
         <h2>{artistName} Mode</h2>
@@ -368,14 +348,13 @@ const Game = () => {
           <div className="card-content">
 
             <div className="left-column">
-              {/* <div className="left-content"> */}
+              <div className="left-content">
 
               <div className = "stats-info-container">
                 <div className="stat">
                   <IconBrandDeezer size={24} />
                   <h2>{1 - playCount}</h2>
                 </div>
-
                   <h5>Plays Left For Song</h5>
                 </div>
 
@@ -384,11 +363,10 @@ const Game = () => {
                   <IconFlameFilled size={24} />
                   <h2>{currentStreak}</h2>
                 </div>
-
                   <h5> Streak </h5>
                 </div>
 
-              {/* </div> */}
+              </div>
             </div>
 
             <div className="right-column">
@@ -397,7 +375,6 @@ const Game = () => {
                   style={{
                     color: "white",
                     textAlign: "center",
-                    marginTop: "80px",
                   }}
                 >
                   {loadingMessage.split("\n").map((line, index) => (
@@ -406,7 +383,7 @@ const Game = () => {
                       <br />
                     </React.Fragment>
                   ))}
-                  <Loader color="#916691" style={{ marginTop: "20px" }} />
+                  <Loader color="#916691" style={{ marginTop: "35px" }} />
                 </div>
               ) : (
                 <>
@@ -414,7 +391,7 @@ const Game = () => {
                     key={song.uri}
                     ref={audioRef}
                     controls
-                    style={{ display: "none" }} // Hide the audio player
+                    style={{ display: "none" }} 
                     autoPlay
                     onPlay={handlePlay}
                   >
@@ -429,38 +406,13 @@ const Game = () => {
                       marginTop: 20,
                     }}
                   >
-                    <div
-                      style={{ position: "relative", display: "inline-block" }}
-                    >
-                      <RingProgress
-                        size={150}
-                        thickness={8}
-                        rootColor="#44354f"
-                        sections={[{ value: progress, color: "#73687b" }]}
-                      />
-                      <ActionIcon
-                        size={60}
-                        className="play-music-button"
-                        // color="violet"
-                        variant="filled"
-                        style={{ //tODO: add a cool hover effect
-                          // background: "white", //"#6d336d"
-                          position: "absolute",
-                          top: "50%",
-                          left: "50%",
-                          transform: "translate(-50%, -50%)",
-                          borderRadius: "50%",
-                        }} //backgroundColor: '#5b4f65',
-                        onClick={isPlaying ? stopSnippet : playSnippet}
-                        disabled={playCount >= 1} // Disable button after 2 plays
-                      >
-                        <IconPlayerPlayFilled
-                          size={30}
-                          className="play-icon"
-                          style={{ color: "white" }} //"e8e6e9"
-                        />
-                      </ActionIcon>
-                    </div>
+                    <PlayButton
+                      progress={progress}
+                      isPlaying={isPlaying}
+                      playCount={playCount}
+                      stopSnippet={stopSnippet}
+                      playSnippet={playSnippet}
+                    />
                   </Center>
 
                   <Button
@@ -468,14 +420,6 @@ const Game = () => {
                     variant="outline"
                     color="gray"
                     className="skip-button"
-                    style={{
-                      backgroundColor: "transparent",
-                      borderColor: "#5b4f65",
-                      color: "white",
-                      justifySelf: "right",
-                      width: "80px",
-                      marginTop: "10px",
-                    }}
                   >
                     <span>Skip</span>
                   </Button>
@@ -506,9 +450,9 @@ const Game = () => {
                         transitionProps: { transition: 'scale-y', duration: 150 },
                       }}
                       classNames={{
-                        input: styles.input, // Apply the CSS class for input
-                        dropdown: styles.dropdown, // Apply the CSS class for dropdown
-                        option: styles.option, // Apply the CSS class for items
+                        input: styles.input, 
+                        dropdown: styles.dropdown, 
+                        option: styles.option, 
                       }}
                     />
                   </form>
@@ -529,17 +473,16 @@ const Game = () => {
         onClose={() => {setIsModalOpen(false); skipSnippet(true)}}
         title= {
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <IconLeaf size={24} style={{ marginRight: '8px' }} /> {/* Tabler Leaf Icon */}
+            <IconLeaf size={24} style={{ marginRight: '8px' }} /> 
             Choose the snippet length
           </div>
         }
         centered
         className="centered-modal-content"
       >
-        {/* <p>Choose the snippet length:</p> */}
         <Radio.Group
-          value={snippetLength.toString()} // Convert the number to string for Radio values
-          onChange={handleSnippetLengthChange} // Call handler on change
+          value={snippetLength.toString()} 
+          onChange={handleSnippetLengthChange} 
           name="snippet-length"
           className="centered-radio-group" 
         >
@@ -550,6 +493,7 @@ const Game = () => {
 
         <Button
           onClick={() => {setIsModalOpen(false); skipSnippet(true)}}
+          className = "close-button" 
           style={{ marginTop: "20px" }}
         >
           Close

@@ -11,6 +11,8 @@ const Login = () => {
     window.location.href = import.meta.env.VITE_LOGIN_URL; // TODO: put this in an env. 
   };
 
+  console.log("VITE_LOGIN_URL: ", import.meta.env.VITE_LOGIN_URL)
+
   const handlePlayWithoutLogin = () => {
     navigate('/dashboard'); // Redirect to the dashboard page
   };
@@ -23,7 +25,7 @@ const Login = () => {
         <p> Test your knowledge of your favourite artists</p>
         <div className="button-group">
         <Button
-            onClick={handlePlayWithoutLogin} //TODO: fix this it doesn't hover properly for some reason
+            onClick={handlePlayWithoutLogin} 
             className="play-button"
           >
             Play Now
