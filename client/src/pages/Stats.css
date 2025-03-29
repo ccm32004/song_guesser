@@ -39,6 +39,7 @@
   flex-direction: column;
   gap: 20px;
   padding: 40px;
+  padding-top: 5px;
   align-items: center;
 }
 

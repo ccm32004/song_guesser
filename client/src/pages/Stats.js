@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { HeaderSimple } from '../components/Header';
+import { HeaderSimple } from '../components/Header.js';
 import {Button, Loader} from '@mantine/core';
 import { Carousel } from '@mantine/carousel'; // Import Carousel from Mantine
 import { CompositeChart } from '@mantine/charts';
 import { IconBrandSpotifyFilled } from '@tabler/icons-react';
-import {fetchUserProfile, fetchUserStats} from '../utils/api';
-import StatsCard from '../components/StatsCard'; // Import the StatsCard component
+import {fetchUserProfile, fetchUserStats} from '../utils/api.js';
+import StatsCard from '../components/StatsCard.js'; // Import the StatsCard component
 import {data, artistStatsData} from './graphdata.js'; // Import the JSON data
 import './Stats.css';
 import '@mantine/carousel/styles.css'; 

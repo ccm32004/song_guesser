@@ -297,7 +297,7 @@ const Game = () => {
 
   const skipSnippet = async (isNewDifficulty) => {
     const loadingMessage = isNewDifficulty 
-        ? `Setting new difficulty: \n${difficultyMap[snippetLength]}` 
+        ? `Setting difficulty: \n${difficultyMap[snippetLength]}` 
         : `Answer: \n${song.title}`;
 
     setLoadingMessage(loadingMessage);

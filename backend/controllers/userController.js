@@ -8,8 +8,6 @@ const mongoURI = process.env.MONGO_URI;
 //mongo db connection state defintions : 0 = disconnected, 1 = connected, 2 = connecting, 3 = disconnecting
 
 //***************** MONGO DB RELATED ENDPOINTS ******************//
-
-//TODO: check if this needs res.status, since it's only used in the backend?? 
 const createUser = async (displayName, email) => {
   console.log("creating user mayhaps")
   console.log(mongoose.connection.readyState); 

@@ -3,15 +3,10 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { Button, Container, Title } from '@mantine/core';
 import { HeaderSimple } from '../components/Header';
-import './Login.css'; // Import the CSS file
+import './Home.css'; // Import the CSS file
 
-const Login = () => {
+const Home = () => {
   const navigate = useNavigate();
-  const handleLogin = () => {
-    window.location.href = import.meta.env.VITE_LOGIN_URL; // TODO: put this in an env. 
-  };
-
-  console.log("VITE_LOGIN_URL: ", import.meta.env.VITE_LOGIN_URL)
 
   const handlePlayWithoutLogin = () => {
     navigate('/dashboard'); // Redirect to the dashboard page
@@ -30,16 +25,10 @@ const Login = () => {
           >
             Play Now
           </Button>
-          {/* <Button
-            onClick={handleLogin}
-            className="login-button"
-          >
-            Login with Spotify
-          </Button> */}
         </div>   
       </Container>
     </div>
   );
 };
 
-export default Login;
+export default Home;

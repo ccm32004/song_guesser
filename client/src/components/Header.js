@@ -7,8 +7,10 @@ import { fetchUserProfile, logout } from '../utils/api';
 import { useNavigate, Link, useLocation} from 'react-router-dom';
 import './Header.css'; // Correctly import the CSS file
 
+//TODO: add icon to top part of the app
+
 const links = [
-  { link: '/login', label: 'Home' },
+  { link: '/home', label: 'Home' },
   { link: '/dashboard', label: 'Game' },
   { link: '/stats', label: 'My Stats' },
   // { link: '/about', label: 'About' },
@@ -58,7 +60,7 @@ export function HeaderSimple() {
         {/* Left Side: App Name */}
         <div style={{ display: 'flex', alignItems: 'left' }} onClick={handleTitleClick}>
         <IconMusic size={24} style={{ marginRight: '8px' }} /> {/* Add the music icon */}
-        <Title order={4}>Heardle</Title>
+        <Title order={4}>MelodyMatch</Title>
       </div>
 
         {/* Center: Navigation Links */}
@@ -89,7 +91,7 @@ export function HeaderSimple() {
               </Menu.Dropdown>
             </Menu>
           ) : (
-            <UnstyledButton onClick={() => navigate('/login')}> {/* Login logic */}
+            <UnstyledButton onClick={() => navigate('/stats')}> {/* Login logic */}
               <Group>
                 <IconLogin size={15} />
                 <Text size="sm">Login</Text>
