@@ -6,7 +6,6 @@ export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    console.log("checking in login status")
     const checkLoginStatus = () => {
       const cookies = document.cookie.split(';').reduce((acc, cookie) => {
         const [key, value] = cookie.split('=').map(c => c.trim());
@@ -15,10 +14,8 @@ export const AuthProvider = ({ children }) => {
       }, {});
 
       if (cookies['connect.sid']) {
-        console.log("logged in")
         setIsLoggedIn(true);
       } else {
-        console.log("logged out")
         setIsLoggedIn(false);
       }
     };

@@ -30,7 +30,6 @@ export const fetchSnippet = async (artistName) => {
       }
 
       const data = await response.json();
-      console.log('Fetched Song:', data);
 
       return { song: data, previewUrl: data.previewUrl };
   } catch (err) {
@@ -38,22 +37,6 @@ export const fetchSnippet = async (artistName) => {
       throw new Error('Error fetching the song snippet.');
   }
 };
-
-
-// Function to fetch the user's profile
-// export const fetchUserProfile = async () => {
-//   try {
-//     const response = await fetch(`${API_BASE_URL}/profile`, { credentials: 'include' });
-//     if (!response.ok) {
-//       throw new Error('Network response was not ok');
-//     }
-//     const data = await response.json();
-//     return data;
-//   } catch (error) {
-//     console.error('Error fetching user profile:', error);
-//     throw error;
-//   }
-// };
 
 export const logout = () => {
   localStorage.removeItem('jwt_token');
@@ -119,10 +102,7 @@ export const fetchUserStats = async () => {
       throw new Error('User not found or error in request');
     }
 
-    const data = await response.json();  // Parse the JSON response
-    console.log('User Data:', data);  
-
-    // Here you can return the data, or do something with it, like updating the UI
+    const data = await response.json();  // Parse the JSON response 
     return data;
 
   } catch (error) {
@@ -141,7 +121,6 @@ export const updateHighScore = async (artistName, difficulty, score) => {
       throw new Error('No JWT token found. Please log in.');
     }
 
-    console.log(`${API_BASE_URL}/update-high-score`)
     const response = await fetch(`${API_BASE_URL}/update-high-score`, {
       method: 'POST',  // Make sure to use POST for updating data
       headers: {
@@ -162,7 +141,6 @@ export const updateHighScore = async (artistName, difficulty, score) => {
     }
 
     const data = await response.json();
-    console.log('High score updated successfully:', data);
     return data;
 
   } catch (error) {
@@ -187,7 +165,6 @@ export const deleteAllUsers = async () => {
     }
 
     const data = await response.json();
-    console.log(data.message);  // This will log the response message from the backend
   } catch (error) {
     console.error('Error deleting all users:', error);
   }

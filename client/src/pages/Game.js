@@ -77,7 +77,6 @@ const Game = () => {
    //TODO: remove the functionality of the play button 
 
   function setProgressIndicator() {
-    console.log("setting interval");
     setProgress(0);
     const id = setInterval(() => {
       setProgress((prevProgress) => {
@@ -97,9 +96,6 @@ const Game = () => {
 
   //only run if the song preview url changes
   useEffect(() => {
-    console.log("here is the song preview url");
-    console.log(songPreviewUrl);
-    console.log("checking if track has started: ", isTrackStarted);
     if (audioRef.current && songPreviewUrl && isTrackStarted & isPreviewUrlChanged) {
 
       if (intervalId) {
@@ -126,10 +122,8 @@ const Game = () => {
       const result = await fetchUserProfile();
 
       if (result.display_name) {
-        console.log("user is logged in");
         setLoggedIn(true);
       } else {
-        console.log("user is NOT logged in");
         setLoggedIn(false);
       }
     };
@@ -141,7 +135,6 @@ const Game = () => {
   };
 
   const handlePlay = () => {
-    console.log("audio has started playing");
     setIsTrackStarted(true);
   };
 
@@ -164,7 +157,6 @@ const Game = () => {
     }
 
     setIsPlaying(true);
-    console.log("playing snippet after you pressed play");
 
     if (audioRef.current) {
       const audio = audioRef.current;
@@ -222,13 +214,10 @@ const Game = () => {
     console.log("Input title:", normalizedInputTitle);
 
     if (normalizedInputTitle === normalizedSongTitle) {
-      console.log("correct");
       setLoadingMessage("Correct! Loading next song...");
       setIsLoadingNextSong(true); 
       
       setTimeout(async () => {
-        console.log("resetting game");
-
         await incrementCurrentStreak();
         setPlayCount(0); 
         setInputTitle(""); 
@@ -240,7 +229,6 @@ const Game = () => {
 
 
     } else {
-      console.log("wrong");
       setValidationMessage("Incorrect. Try again!");
       setTimeout(() => {
         setValidationMessage(" "); // Clear the validation message after 3 seconds
@@ -252,8 +240,6 @@ const Game = () => {
     const updatedStreak = currentStreak + 1;
 
     if (loggedIn && updatedStreak > userHighScore) {
-      console.log("updating high score");
-
       try {
         const response = await updateHighScore(
           artistName,
@@ -285,7 +271,6 @@ const Game = () => {
     event.preventDefault();
     setIsPlaying(false);
     validateTitle();
-    console.log("handling submit");
   };
 
   const handleAudioEnded = () => {

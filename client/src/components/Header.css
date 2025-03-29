@@ -20,7 +20,7 @@
     padding: 8px 12px;
     border-radius: var(--mantine-radius-sm);
     text-decoration: none;
-    color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-0));
+    color: #8a7496;
     font-size: var(--mantine-font-size-sm);
     font-weight: 500;
   }
@@ -47,3 +47,66 @@
   .mantine-Menu-item:focus{
     color: var(--mantine-color-gray-4) !important;
   }
+
+/* Mobile Menu Styles */
+.mobile-menu {
+  display: none; /* Hidden by default */
+  flex: 1;
+  display: flex;
+  justify-content: flex-end; /* Align to the right */
+}
+
+/* Ensures the burger dropdown opens downwards */
+.mobile-links {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 70px; /* Adjust the distance below the burger icon */
+  right: 0;
+  padding: 10px;
+  border-radius: 4px;
+  background-color: rgba(194, 194, 194, 0.1);
+  z-index: 10; /* Ensure the menu is above other elements */
+}
+
+.mobile-links .link {
+  padding: 10px;
+  color: #f5f4f6; /* Set the color of the link */
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.mobile-links .link:hover {
+  background-color: #5b4f65; /* Hover effect */
+}
+
+/* On mobile: Hide login button and show burger menu */
+@media (max-width: 768px) {
+  /* Hide login button on mobile */
+  .right {
+    display: none;
+  }
+
+  /* Show burger menu on mobile */
+  .burger-menu {
+    display: block;
+  }
+
+  .links {
+    display: none !important; /* Hide links on mobile */
+  }
+
+  .burger-menu.open + .mobile-links {
+    display: block !important; /* Show links when burger is clicked */
+  }
+}
+
+/* For larger screens, show the links and hide the burger menu */
+@media (min-width: 769px) {
+  .mobile-menu {
+    display: none; /* Hide burger menu on desktop */
+  }
+  .burger-menu {
+    display: none; /* Hide burger menu on desktop */
+  }
+}

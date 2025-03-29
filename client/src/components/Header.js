@@ -1,38 +1,36 @@
-import React, { useState, useEffect} from 'react';
-import { Burger, Container, Group, Menu, Avatar, UnstyledButton, Text, Title } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { IconChevronDown, IconLogout, IconLogin } from '@tabler/icons-react';
-import { IconMusic } from '@tabler/icons-react';
+import React, { useState, useEffect } from 'react';
+import { Container, Group, Menu, Avatar, UnstyledButton, Text, Title, Burger } from '@mantine/core';
 import { fetchUserProfile, logout } from '../utils/api';
-import { useNavigate, Link, useLocation} from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { IconChevronDown, IconLogout, IconLogin, IconMusic } from '@tabler/icons-react';
 import './Header.css'; // Correctly import the CSS file
 
-//TODO: add icon to top part of the app
-
+// Links for navigation
 const links = [
-  { link: '/home', label: 'Home' },
+  { link: '/Home', label: 'Home' },
   { link: '/dashboard', label: 'Game' },
   { link: '/stats', label: 'My Stats' },
   // { link: '/about', label: 'About' },
 ];
 
 export function HeaderSimple() {
-  const [opened, { toggle }] = useDisclosure(false);
   const [user, setUser] = useState(null);
+  const [opened, setOpened] = useState(false); // Manage burger menu state
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Fetch user profile on load
   useEffect(() => {
-    console.log("checking user profile")
+    console.log('checking user profile');
     fetchUserProfile()
-      .then(profile => {
+      .then((profile) => {
         if (profile.display_name) {
           setUser(profile);
         } else {
           setUser(null);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Error fetching user profile:', error);
         setUser(null);
       });
@@ -43,24 +41,26 @@ export function HeaderSimple() {
       key={link.label}
       to={link.link} // Use `to` instead of `href` for navigation
       className={`link ${location.pathname === link.link ? 'active' : ''}`}
-      onClick={() => setActive(link.link)}
     >
       {link.label}
     </Link>
   ));
 
   const handleTitleClick = () => {
-    navigate('/'); // Navigate to the login page or home page
+    navigate('/'); // Navigate to the home page
   };
 
+  const toggleBurger = () => {
+    setOpened((prev) => !prev); // Toggle burger menu
+  };
 
   return (
     <header className="header">
       <Container size="md" className="inner">
         {/* Left Side: App Name */}
         <div style={{ display: 'flex', alignItems: 'left' }} onClick={handleTitleClick}>
-        <IconMusic size={24} style={{ marginRight: '8px' }} /> {/* Add the music icon */}
-        <Title order={4}>MelodyMatch</Title>
+       <IconMusic size={24} style={{ marginRight: '8px' }} /> {/* Add the music icon */}
+      <Title order={4}>MelodyMatch</Title>
       </div>
 
         {/* Center: Navigation Links */}
@@ -68,8 +68,33 @@ export function HeaderSimple() {
           {items}
         </Group>
 
+        {/* Right Side: Burger Menu for Mobile */}
+        <div className="mobile-menu">
+          <Burger
+            opened={opened}
+            onClick={toggleBurger}
+            className="burger-menu"
+            size="sm"
+            style={{ color: '#000' }}
+          />
+          {opened && (
+            <div className="mobile-links">
+              {links.map((link) => (
+                <Link
+                  key={link.label}
+                  to={link.link}
+                  className="link"
+                  onClick={() => setOpened(false)} // Close burger when a link is clicked
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* Right Side: Login/Logout or User Profile */}
-        <Group>
+        <div className="right">
           {user ? (
             <Menu position="bottom-end" transitionProps={{ transition: 'pop-top-right' }} withinPortal>
               <Menu.Target>
@@ -91,18 +116,16 @@ export function HeaderSimple() {
               </Menu.Dropdown>
             </Menu>
           ) : (
-            <UnstyledButton onClick={() => navigate('/stats')}> {/* Login logic */}
+            <UnstyledButton onClick={() => navigate('/stats')}>
               <Group>
                 <IconLogin size={15} />
                 <Text size="sm">Login</Text>
               </Group>
             </UnstyledButton>
           )}
-        </Group>
-
-        {/* Burger Menu for Mobile */}
-        <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" />
+        </div>
       </Container>
     </header>
   );
 }
+

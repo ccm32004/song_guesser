@@ -69,11 +69,8 @@ const updateHighScore = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Find the artist in the user's artists array
     let artist = user.artists.find(artist => artist.artistName === artistName);
-    console.log('Artist found:', artist); // Debugging: Check if artist was found
 
-    // If the artist doesn't exist, create a new one
     if (!artist) {
       console.log("Creating new artist entry");
       artist = {
@@ -84,11 +81,9 @@ const updateHighScore = async (req, res) => {
           hard: { score: 0 }
         }
       };
-      // Push the new artist into the artists array
       user.artists.push(artist);
     }
 
-    // Check if the difficulty is valid
     if (!artist.highScores[difficulty]) {
       console.log("Invalid difficulty");
       return res.status(400).json({ message: 'Invalid difficulty' });
@@ -98,7 +93,7 @@ const updateHighScore = async (req, res) => {
     if (artist.highScores[difficulty].score < score) {
       artist.highScores[difficulty].score = score;
       console.log("Updating high score", artist.highScores[difficulty].score);
-      await user.save(); // Save the updated user document to the database
+      await user.save(); 
       console.log("Updated and sending response", artist.highScores[difficulty].score);
       return res.status(200).json({ status: 200, message: 'High score updated successfully', highScore: artist.highScores[difficulty].score });
     } else {
@@ -112,12 +107,10 @@ const updateHighScore = async (req, res) => {
   }
 };
 
-  
-
 // Get a user by email
 const getUser = async (req, res) => {
   console.log(mongoose.connection.readyState); 
-    const { email } = req.user; // Use URL params to get the email
+    const { email } = req.user; 
   
     try {
       const user = await User.findOne({ email });
@@ -125,7 +118,6 @@ const getUser = async (req, res) => {
         return res.status(404).json({ message: 'User not found' });
       }
   
-      // Respond with the user data
       console.log("returned user", user)
       res.status(200).json(user);
     } catch (error) {
@@ -134,42 +126,7 @@ const getUser = async (req, res) => {
     }
 };
 
-const deleteAllUsers = async () => {
-  mongoose.connect(mongoURI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  }).then(async () => {
-    console.log('Connected to MongoDB');
-    
-    await User.deleteMany({});
-    console.log('All users deleted');
-    
-    mongoose.disconnect();
-    return { status: 204, message: "Successfully deleted all users"}; 
-  }).catch(err => {
-    console.error('Error connecting to MongoDB', err);
-  });
-};
-
 //***************** SPOTIFY API ENDPOINTS RELATING TO USER ******************//
-// async function getProfile(req, res) {
-//   try {
-//     const access_token = req.session.access_token
-    
-//     if (!access_token) {
-//       return res.status(401).json({ error: 'Unauthorized access' });
-//     }
-
-//     const response = await axios.get('https://api.spotify.com/v1/me', {
-//       headers: { Authorization: `Bearer ${access_token}` },
-//     });
-
-//     res.json(response.data);
-//   } catch (err) {
-//     res.status(500).send('Error fetching user profile');
-//   }
-// }
-
 async function getProfile(req, res) { 
   const { display_name } = req.user;
 

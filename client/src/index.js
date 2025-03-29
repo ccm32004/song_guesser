@@ -43,7 +43,7 @@ const customTheme = createTheme({
     Title: {
       styles: {
         root: {
-          color: '#f1e8f7', // Set the welcome text color to purple
+          color: ' #f1e8f7', // Set the welcome text color to purple
         },
       },
     },
@@ -63,7 +63,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <ColorSchemeScript forceColorScheme="dark" />
-    <MantineProvider theme={customTheme}>
+    <MantineProvider forceColorScheme="dark" theme={customTheme}>
       <BrowserRouter>
         <App />
       </BrowserRouter>

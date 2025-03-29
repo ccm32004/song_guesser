@@ -27,10 +27,8 @@ const Stats = () => {
 
                     if (userStats) {
                         setUserStats(userStats);
-                        console.log(userStats);
 
                         if (userStats.artists.length !== 0){
-                            console.log('User has artists stats data');
                             const transformedData = userStats.artists.map((artist) => ({
                                 artist: artist.artistName,
                                 streaks: {

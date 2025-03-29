@@ -1,7 +1,7 @@
 .login-container {
     background-image: url('/purple2.png'); /* Adjust the path if needed */
     /* background-size: cover; */
-    background-size: 100% 115%; /* Scale the background to twice its height */
+    background-size: 100% 115%; 
     background-repeat: no-repeat;
     background-attachment: fixed;
     height: 100vh;
@@ -11,12 +11,12 @@
     align-items: center;
     text-align: center;
     padding: 20px;
-    transition: background-size 0.8s ease-in-out; 
+    /* transition: background-size 0.8s ease-in-out;  */
   }
-
+/* 
   .login-container:hover {
-    background-size: 120% 130%; /* Zoom in (increase size) */
-  }
+    background-size: 120% 130%; 
+  } */
   
   .login-content {
     margin-top: 40px;
@@ -53,17 +53,17 @@
   /* these contorl transition drop down the welcome portion */
   .login-content {
     opacity: 0;
-    transform: translateY(20px); /* Start from 20px below */
-    animation: fadeInUp 0.6s ease-out forwards; /* The animation */
+    transform: translateY(20px); 
+    animation: fadeInUp 0.6s ease-out forwards;
   }
   
   /* Optional staggered effect for specific elements inside */
-  .login-content.staggered {
+  /* .login-content.staggered {
     animation: fadeInUp 0.8s ease-out forwards;
-    animation-delay: 0.2s; /* Slight delay for staggered effect */
-  }
+    animation-delay: 0.2s;
+  } */
   
-  @keyframes fadeInUp {
+  /* @keyframes fadeInUp {
     from {
       opacity: 0;
       transform: translateY(20px);
@@ -72,4 +72,23 @@
       opacity: 1;
       transform: translateY(0);
     }
+  } */
+
+  /* For smaller screens, zoom in the background */
+@media (max-width: 1024px) {
+  .login-container {
+    background-size: 120% 130%; /* Zoom in the background on smaller screens */
   }
+}
+
+@media (max-width: 768px) {
+  .login-container {
+    background-size: 290% 150%; /* Further zoom on even smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    background-size: 200% 210%; /* Maximum zoom effect on very small screens */
+  }
+}
