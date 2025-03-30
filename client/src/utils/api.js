@@ -150,24 +150,3 @@ export const updateHighScore = async (artistName, difficulty, score) => {
 };
 
 
-//TODO: make a button in stats page to delete all users
-export const deleteAllUsers = async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/deleteAllUsers`, {
-      method: 'DELETE',  // HTTP method DELETE
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to delete users');
-    }
-
-    const data = await response.json();
-  } catch (error) {
-    console.error('Error deleting all users:', error);
-  }
-};
-
-

@@ -11,6 +11,4 @@ router.get('/get-user-stats', authenticateJWT, userController.getUser);
 
 router.get('/profile', authenticateJWT, userController.getProfile);
 
-router.delete('/deleteAllUsers', userController.deleteAllUsers);
-
 module.exports = router;
