@@ -1,12 +1,12 @@
 {
-  "name": "MelodyMatch",
+  "name": "melodymatch",
   "version": "1.0.0",
   "scripts": {
     "start": "node server/server.js",  
-    "heroku-postbuild": "cd client && npm install && npm run build"  
+    "heroku-postbuild": "npm install --prefix server && cd client && npm install && npm run build"
   },
-  "dependencies": {
-    "express": "^4.17.1"  
+  "engines": {
+    "node": "14.x"
   }
 }
   

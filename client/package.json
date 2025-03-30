@@ -7,7 +7,6 @@
     "@mantine/charts": "^7.17.2",
     "@mantine/core": "^7.17.2",
     "@mantine/emotion": "^7.17.2",
-    "@mantine/hooks": "^7.17.2",
     "@tabler/icons-react": "^3.26.0",
     "@vitejs/plugin-react": "^4.3.3",
     "embla-carousel-react": "^7.1.0",
