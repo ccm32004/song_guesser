@@ -147,6 +147,5 @@ module.exports = {
   updateHighScore,
   getUser,
   getProfile,
-  getUserProfile,
-  deleteAllUsers
+  getUserProfile
 };
