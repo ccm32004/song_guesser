@@ -1,8 +1,9 @@
-const express = require('express');
+import express from 'express';
+import { getTrackSnippet } from '../controllers/songController.js';
+import { getValidAccessToken } from '../middleware/spotifyToken.js';
+
 const router = express.Router();
-const { getTrackSnippet } = require('../controllers/songController');
-const { getValidAccessToken } = require('../middleware/spotifyToken');
 
 router.get('/getTrackSnippet', getValidAccessToken, getTrackSnippet);
 
-module.exports = router;
+export default router;

@@ -1,6 +1,6 @@
-const axios = require('axios');
-const User = require("../models/user");
-const mongoose = require('mongoose');
+import axios from 'axios';
+import User from '../models/user.js';
+import mongoose from 'mongoose';
 
 //for the dev kill all users button
 const mongoURI = process.env.MONGO_URI;
@@ -142,7 +142,7 @@ const getUserProfile = (accessToken) => {
   });
 };
 
-module.exports = {
+export{
   createUser,
   updateHighScore,
   getUser,

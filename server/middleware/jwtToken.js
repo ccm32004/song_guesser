@@ -1,4 +1,8 @@
-const jwt = require('jsonwebtoken');
+import dotenv from 'dotenv';
+dotenv.config(); 
+
+import jwt from 'jsonwebtoken';  // Import the entire CommonJS module as a default import
+const { verify } = jwt;        // Then destructure the 'verify' method from the imported object
 const JWT_SECRET = process.env.JWT_SECRET 
 
 const authenticateJWT = (req, res, next) => {
@@ -10,7 +14,7 @@ const authenticateJWT = (req, res, next) => {
     return res.status(401).json({ message: 'Access Denied: No token provided' });
   }
 
-  jwt.verify(token, JWT_SECRET, (err, decoded) => {
+  verify(token, JWT_SECRET, (err, decoded) => {
     if (err) {
       console.log("token test failedddd 2")
       return res.status(403).json({ message: 'Invalid or expired token' });
@@ -21,4 +25,4 @@ const authenticateJWT = (req, res, next) => {
   });
 };
 
-module.exports = {authenticateJWT};
+export default authenticateJWT;

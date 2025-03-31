@@ -1,12 +1,16 @@
-const axios = require('axios');
+import axios from 'axios';
 
 //used to read the local json file
-const fs = require('fs');
-const path = require('path');
-
+import fs from 'fs';
+import path from 'path';
 //used to parse the html
-const cheerio = require('cheerio');
-const jsonpath = require('jsonpath');
+import * as cheerio from 'cheerio';
+import jsonpath from 'jsonpath';
+
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 async function getTrackSnippet(req, res) {
     try {
@@ -52,6 +56,7 @@ async function getTrackSnippet(req, res) {
 //*HELPER FUNCTIONS *//
 async function searchSong(query, access_token) {
   try {
+      console.log("access token", access_token);
       const response = await axios.get('https://api.spotify.com/v1/search', {
           headers: { Authorization: `Bearer ${access_token}` },
           params: { q: query, type: 'track', limit: 1, market: 'CA' },
@@ -120,4 +125,4 @@ function findNodeValueWithJsonPath(jsonString, targetNode) {
   }
 
   
-module.exports = { getTrackSnippet};
+export { getTrackSnippet};

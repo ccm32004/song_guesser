@@ -1,5 +1,11 @@
-const express = require('express');
-const path = require('path');
+import express from 'express';
+import path from 'path';
+
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const router = express.Router();
 
 router.get('/api/songNames/:artistName', (req, res) => {
@@ -15,4 +21,4 @@ router.get('/api/songNames/:artistName', (req, res) => {
   });
 });
 
-module.exports = router;
+export default router;

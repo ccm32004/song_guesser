@@ -1,14 +1,15 @@
-const express = require('express');
+import express from 'express';
+import { getProfile, getUser, updateHighScore } from '../controllers/userController.js';
+import authenticateJWT from '../middleware/jwtToken.js';
+
 const router = express.Router();
-const userController = require('../controllers/userController');
-const { authenticateJWT } = require('../middleware/jwtToken');
 
 // router.post('/create', userController.createUser);
 
-router.post('/update-high-score', authenticateJWT, userController.updateHighScore);
+router.post('/update-high-score', authenticateJWT, updateHighScore);
 
-router.get('/get-user-stats', authenticateJWT, userController.getUser);
+router.get('/get-user-stats', authenticateJWT, getUser);
 
-router.get('/profile', authenticateJWT, userController.getProfile);
+router.get('/profile', authenticateJWT, getProfile);
 
-module.exports = router;
+export default router;

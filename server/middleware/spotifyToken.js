@@ -1,4 +1,4 @@
-const axios = require('axios');
+import axios from 'axios';
 
 async function getValidAccessToken(req, res, next) {
     try {
@@ -26,6 +26,7 @@ async function getValidAccessToken(req, res, next) {
             return res.status(401).json({ error: 'Unauthorized access - No valid token' });
         }
 
+        console.log("client access token is valid, proceeding with request...");
         next();
     } catch (err) {
         console.error(err);
@@ -98,4 +99,4 @@ async function refreshToken(req, res) {
     }
 }
 
-module.exports = { getValidAccessToken };
+export { getValidAccessToken };

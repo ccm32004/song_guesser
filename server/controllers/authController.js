@@ -1,10 +1,12 @@
-const axios = require('axios');
-const mongoose = require('mongoose');
-const userController = require('./userController');
-const { getUserProfile } = require('./userController');
+import dotenv from 'dotenv';
+dotenv.config(); 
+
+import axios from 'axios';
+import mongoose from 'mongoose';
+import { getUserProfile, createUser } from './userController.js';
 
 //this is for the frontend token
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
 const client_id = process.env.SPOTIFY_CLIENT_ID; 
 const client_secret = process.env.SPOTIFY_CLIENT_SECRET; 
@@ -42,6 +44,7 @@ async function login(req, res) {
 
 async function callback(req, res) {
     try {
+      console.log("Callback function triggered");
       const { code, state } = req.query;
       const storedState = req.cookies ? req.cookies['spotify_auth_state'] : null;
   
@@ -78,18 +81,18 @@ async function callback(req, res) {
     
       // Save session
       await req.session.save();
+
+      console.log("connecting to mongoose")
   
       // Connect to MongoDB
       await mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
-  
-      console.log('Connected to MongoDB');
   
       // Fetch the user profile from Spotify
       const userProfileResponse = await getUserProfile(access_token);
       const { display_name, email } = userProfileResponse.data;
   
       // Create or update the user in the database
-      const savedUser = await userController.createUser(display_name, email);
+      const savedUser = await createUser(display_name, email);
       console.log('New user created:', savedUser);
 
       //make jwt token
@@ -137,4 +140,4 @@ function refreshToken (req, res) {
     });
 };
 
-module.exports = { login, callback, refreshToken };
+export { login, callback, refreshToken };
