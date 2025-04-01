@@ -40,18 +40,42 @@ const redisClient = createClient({
   socket: {
     host: process.env.REDIS_HOST,
     port: process.env.REDIS_PORT,
+    connectTimeout: 10000,
   },
 });
 
+redisClient.on('error', err => console.log('Redis Client Error ', err));
+
+await redisClient.connect()
+  .then(() => {
+    console.log('Connected to Redis successfully!');
+  })
+  .catch((err) => {
+    console.error('Redis connection error:', err);
+  });
+
+
+// Handling Redis errors
 redisClient.on('error', (err) => {
   if (err.code === 'ECONNRESET') {
-      console.error('Redis connection reset. Attempting to reconnect...');
-      redisClient.connect();
+    console.error('Redis connection reset. Attempting to reconnect...');
+    reconnectRedis();
   } else {
-      console.error('Redis error:', err);
+    console.error('Redis error:', err);
   }
 });
-await redisClient.connect().catch(console.error);
+
+// Function to handle reconnecting to Redis
+async function reconnectRedis() {
+  try {
+    console.log('Reconnecting to Redis...');
+    await redisClient.connect();
+    console.log('Redis reconnected successfully!');
+  } catch (err) {
+    console.error('Redis reconnect failed:', err);
+    setTimeout(reconnectRedis, 10000); // Retry after 5 seconds (you can adjust this)
+  }
+}
 
 //TODO: set cors policy to only allow the frontend domain in production
 app.use(express.static(__dirname + '/public'))
@@ -66,7 +90,7 @@ app.use(express.static(__dirname + '/public'))
       store: new RedisStore({ client: redisClient, ttl: 3600}),
       secret: session_secret,
       resave: false,
-      saveUninitialized: true,
+      saveUninitialized: false,
       cookie: { secure: false } 
       // cookie: {
       //   httpOnly: true,  // Cookie is HTTP-only (can't be accessed by JavaScript)
@@ -82,6 +106,6 @@ app.use('/', songRoutes);
 app.use('/', authRoutes);
 app.use('/', staticRoutes); 
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

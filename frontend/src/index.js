@@ -43,7 +43,7 @@ const customTheme = createTheme({
     Title: {
       styles: {
         root: {
-          color: ' #f1e8f7', // Set the welcome text color to purple
+          color: ' #f1e8f7',
         },
       },
     },

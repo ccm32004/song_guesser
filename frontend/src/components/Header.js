@@ -3,7 +3,7 @@ import { Container, Group, Menu, Avatar, UnstyledButton, Text, Title, Burger } f
 import { fetchUserProfile, logout } from '../utils/api';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { IconChevronDown, IconLogout, IconLogin, IconMusic } from '@tabler/icons-react';
-import './Header.css'; // Correctly import the CSS file
+import './Header.css'; 
 
 // Links for navigation
 const links = [
