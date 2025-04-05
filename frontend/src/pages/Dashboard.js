@@ -7,13 +7,13 @@ import './Dashboard.css'; // Import the CSS file
 import { fetchSnippet } from '../utils/api'; // Import the fetchSnippet function
 
 //image file paths
-import tsImage from '/ts.png'; // Adjust the path to your image file
+import tsImage from '/images/ts.png'; // Adjust the path to your image file
 
 //https://commons.wikimedia.org/wiki/File:Playboi_Carti_(cropped).jpg
-import playboiCartiImage from '/Playboi_Carti.png'; // Adjust the path to your image file
+import playboiCartiImage from '/images/Playboi_Carti.png'; // Adjust the path to your image file
 
 //https://commons.wikimedia.org/wiki/File:FEQ_July_2018_The_Weeknd_(44778856382).jpg
-import theWeekndImage from  '/theWeeknd.png'; // Adjust the path to your image file
+import theWeekndImage from  '/images/theWeeknd.png'; // Adjust the path to your image file
 
 const Dashboard = () => {
   const [error, setError] = useState(null);

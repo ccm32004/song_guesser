@@ -1,19 +1,23 @@
 FROM node:23
 
-# Set the working directory inside the container
+ARG ENV_FILE
+ENV NODE_ENV $ENV_FILE
+
 WORKDIR /server/node
 
-# Copy the package.json and package-lock.json (if available)
 COPY package*.json ./
 
-# Install dependencies
 RUN npm install
 
-# Copy the rest of the application code
 COPY . .
 
-# Expose the port your app will run on (usually 3000 for Express)
-EXPOSE 3000
+EXPOSE 5001
 
-# Command to run your app (typically starting with "npm start")
-CMD ["npm", "start"]
+CMD npm run start:$NODE_ENV
+
+#docker build --build-arg ENV_FILE=production -t express-backend-prod .
+#docker build --build-arg ENV_FILE=development -t express-backend-dev .
+#running the image
+#docker run --name express-backend-dev -p 5001:5001 express-backend-dev
+
+

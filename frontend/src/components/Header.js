@@ -5,7 +5,6 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { IconChevronDown, IconLogout, IconLogin, IconMusic } from '@tabler/icons-react';
 import './Header.css'; 
 
-// Links for navigation
 const links = [
   { link: '/Home', label: 'Home' },
   { link: '/dashboard', label: 'Game' },
@@ -15,7 +14,7 @@ const links = [
 
 export function HeaderSimple() {
   const [user, setUser] = useState(null);
-  const [opened, setOpened] = useState(false); // Manage burger menu state
+  const [opened, setOpened] = useState(false); 
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -39,7 +38,7 @@ export function HeaderSimple() {
   const items = links.map((link) => (
     <Link
       key={link.label}
-      to={link.link} // Use `to` instead of `href` for navigation
+      to={link.link} 
       className={`link ${location.pathname === link.link ? 'active' : ''}`}
     >
       {link.label}
@@ -47,11 +46,11 @@ export function HeaderSimple() {
   ));
 
   const handleTitleClick = () => {
-    navigate('/'); // Navigate to the home page
+    navigate('/'); 
   };
 
   const toggleBurger = () => {
-    setOpened((prev) => !prev); // Toggle burger menu
+    setOpened((prev) => !prev); 
   };
 
   return (
@@ -84,7 +83,7 @@ export function HeaderSimple() {
                   key={link.label}
                   to={link.link}
                   className="link"
-                  onClick={() => setOpened(false)} // Close burger when a link is clicked
+                  onClick={() => setOpened(false)} 
                 >
                   {link.label}
                 </Link>
@@ -109,7 +108,7 @@ export function HeaderSimple() {
               <Menu.Dropdown>
                 <Menu.Item
                   icon={<IconLogout size={16} />}
-                  onClick={() => logout()} // Logout logic
+                  onClick={() => logout()}
                 >
                   Logout
                 </Menu.Item>

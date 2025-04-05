@@ -3,8 +3,8 @@ import { login, callback } from '../controllers/authController.js';
 
 const router = express.Router();
 
-router.get('/login', login);
+router.get('/api/login', login);
 
-router.get('/callback', callback);
+router.get('/api/callback', callback);
 
 export default router;

@@ -16,15 +16,15 @@ import {
   IconArrowNarrowLeft,
   IconSettings,
   IconLeaf,
-} from "@tabler/icons-react"; // Play Icon
+} from "@tabler/icons-react"; 
 import {
   fetchSnippet,
   fetchSongTitleSuggestions,
   fetchUserProfile,
   updateHighScore,
-} from "../utils/api"; // Import the fetchSnippet function
+} from "../utils/api"; 
 import { HeaderSimple } from "../components/Header";
-import "./Game.css"; // Import the CSS file
+import "./Game.css"; 
 import styles from "./autocomplete.module.css";
 
 //components imported
@@ -46,9 +46,9 @@ const Game = () => {
 
   const [inputTitle, setInputTitle] = useState("");
   const [validationMessage, setValidationMessage] = useState(" ");
-  const [progress, setProgress] = useState(0); // Progress state
-  const [isPlaying, setIsPlaying] = useState(false); // Track if the play button is pressed
-  const [intervalId, setIntervalId] = useState(null); // Track interval ID for clearing
+  const [progress, setProgress] = useState(0); 
+  const [isPlaying, setIsPlaying] = useState(false); 
+  const [intervalId, setIntervalId] = useState(null); 
   const [error, setError] = useState(null);
   const [playCount, setPlayCount] = useState(0);
   const [currentStreak, setCurrentStreak] = useState(0);
@@ -61,7 +61,7 @@ const Game = () => {
   const [snippetLength, setSnippetLength] = useState(2);
 
   //stuff for keeping the high score
-  const [loggedIn, setLoggedIn] = useState(false); //TODO: change this to false later
+  const [loggedIn, setLoggedIn] = useState(false); 
   const [userHighScore, setUserHighScore] = useState(0);
 
   //state variable to track whether the track is started or not (for the ring progress)
@@ -427,7 +427,7 @@ const Game = () => {
                       placeholder="Type the song..."
                       width="100%"
                       data={songSuggestions}
-                      ref={inputRef} // Add ref to the input field
+                      ref={inputRef} 
                       comboboxProps={{
                         position: "bottom",
                         middlewares: { flip: false, shift: false },

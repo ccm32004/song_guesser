@@ -4,12 +4,10 @@ import authenticateJWT from '../middleware/jwtToken.js';
 
 const router = express.Router();
 
-// router.post('/create', userController.createUser);
+router.post('/api/update-high-score', authenticateJWT, updateHighScore);
 
-router.post('/update-high-score', authenticateJWT, updateHighScore);
+router.get('/api/get-user-stats', authenticateJWT, getUser);
 
-router.get('/get-user-stats', authenticateJWT, getUser);
-
-router.get('/profile', authenticateJWT, getProfile);
+router.get('/api/profile', authenticateJWT, getProfile);
 
 export default router;

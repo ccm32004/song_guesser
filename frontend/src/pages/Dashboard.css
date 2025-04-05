@@ -1,5 +1,5 @@
 .dashboard-container {
-    background-image: url('/purple2.png'); /* TODO: make the global background a shade of purple so it matches*/
+    background-image: url('/images/purple2.png'); /* TODO: make the global background a shade of purple so it matches*/
     background-size: 100% 260%; 
     background-position:  top left; /* Position the background at the top */
     background-repeat: no-repeat;

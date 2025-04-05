@@ -1,5 +1,5 @@
 .game-container {
-    background-image: url('/purple2.png'); /* Adjust the path if needed */
+    background-image: url('/images/purple2.png'); /* Adjust the path if needed */
     background-size: 100% 270%; /* Scale the background to twice its height */
     background-position: top; /* Position the background at the top */
     background-repeat: no-repeat;

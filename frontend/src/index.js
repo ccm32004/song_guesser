@@ -16,8 +16,8 @@ const customTheme = createTheme({
     dark: ['#2c1c39', '#44354f', '#5b4f65', '#73687b', '#8a8191', '#a19aa7', '#b9b3bd', '#d0cdd3', '#e8e6e9', '#ffffff'],
     text: ['#ffffff'], // Define custom text color
   },
-  primaryColor: 'brand', // Set your primary color
-  primaryShade: 5, // Set the primary shade
+  primaryColor: 'brand', 
+  primaryShade: 5, 
   components: {
     Button: {
       styles: (theme) => ({

@@ -1,5 +1,10 @@
 import dotenv from 'dotenv';
-dotenv.config(); 
+// dotenv.config(); 
+if (process.env.NODE_ENV === 'development') {
+  dotenv.config({ path: '.env.development' });
+} else if (process.env.NODE_ENV === 'production') {
+  dotenv.config({ path: '.env.production' });
+}
 
 import jwt from 'jsonwebtoken';  // Import the entire CommonJS module as a default import
 const { verify } = jwt;        // Then destructure the 'verify' method from the imported object

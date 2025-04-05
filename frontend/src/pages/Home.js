@@ -1,15 +1,14 @@
-// Login.js
 import React from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom'; 
 import { Button, Container, Title } from '@mantine/core';
 import { HeaderSimple } from '../components/Header';
-import './Home.css'; // Import the CSS file
+import './Home.css'; 
 
 const Home = () => {
   const navigate = useNavigate();
 
   const handlePlayWithoutLogin = () => {
-    navigate('/dashboard'); // Redirect to the dashboard page
+    navigate('/dashboard'); 
   };
 
   return (

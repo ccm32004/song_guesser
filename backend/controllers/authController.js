@@ -1,11 +1,15 @@
 import dotenv from 'dotenv';
-dotenv.config(); 
+// dotenv.config(); 
+if (process.env.NODE_ENV === 'development') {
+  dotenv.config({ path: '.env.development' });
+} else if (process.env.NODE_ENV === 'production') {
+  dotenv.config({ path: '.env.production' });
+}
 
 import axios from 'axios';
 import mongoose from 'mongoose';
 import { getUserProfile, createUser } from './userController.js';
 
-//this is for the frontend token
 import jwt from 'jsonwebtoken';
 
 const client_id = process.env.SPOTIFY_CLIENT_ID; 
@@ -48,21 +52,18 @@ async function callback(req, res) {
       const { code, state } = req.query;
       const storedState = req.cookies ? req.cookies['spotify_auth_state'] : null;
   
-      // Check if state matches
       if (state !== storedState) {
         return res.redirect('/#' + new URLSearchParams({ error: 'state_mismatch' }));
       }
   
       res.clearCookie('spotify_auth_state'); // Clear the cookie
   
-      // Prepare data for the token request
       const authData = new URLSearchParams({
         code,
         redirect_uri,
         grant_type: 'authorization_code',
       });
   
-      // Send a POST request to get the access and refresh tokens
       const authResponse = await axios.post('https://accounts.spotify.com/api/token', authData, {
         headers: {
           'content-type': 'application/x-www-form-urlencoded',
@@ -74,17 +75,14 @@ async function callback(req, res) {
 
       const tokenExpiry = Date.now() + expires_in * 1000; 
 
-        // Store tokens and expiration time in the session
       req.session.access_token = access_token;
       req.session.refresh_token = refresh_token;
       req.session.token_expiry = tokenExpiry;
-    
-      // Save session
+
       await req.session.save();
 
       console.log("connecting to mongoose")
   
-      // Connect to MongoDB
       await mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
   
       // Fetch the user profile from Spotify
@@ -99,18 +97,16 @@ async function callback(req, res) {
       const token = jwt.sign(
         { display_name, email}, 
         jwt_secret, 
-        { expiresIn: '1h' }  // Expiration time for the JWT
+        { expiresIn: '1h' } 
       );
   
-      // Redirect to dashboard with the access token
       //TOO: do we need this access token lmao
       console.log("token: ", token)
-      return res.redirect(`http://localhost:3000/dashboard?token=${token}`);
+      return res.redirect(`${process.env.FRONTEND_URL}/dashboard?token=${token}`);
   
     } catch (err) {
       console.error('Error during callback process:', err);
-      // Handle errors
-      return res.redirect('http://localhost:3000/?error=' + encodeURIComponent(err.message));
+      return res.redirect(`${process.env.FRONTEND_URL}/?error=` + encodeURIComponent(err.message));
     }
 }
 

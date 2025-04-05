@@ -18,10 +18,16 @@ import songRoutes from './routes/songRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import staticRoutes from './routes/staticRoutes.js';
 
-dotenv.config();
+// dotenv.config();
+if (process.env.NODE_ENV === 'development') {
+  dotenv.config({ path: '.env.development' });
+} else if (process.env.NODE_ENV === 'production') {
+  dotenv.config({ path: '.env.production' });
+}
+
 const app = express();
-const PORT = process.env.PORT || 3001;
-const origin = process.env.CORS_ORIGIN;
+const PORT = process.env.PORT || 3002;
+const origin = process.env.FRONTEND_URL;
 const session_secret = process.env.SESSION_SECRET;
 
 const __filename = fileURLToPath(import.meta.url);
