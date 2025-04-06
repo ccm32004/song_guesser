@@ -1,8 +1,20 @@
 server {
     listen 80;
-    server_name ec2-3-148-200-154.us-east-2.compute.amazonaws.com;
+    server_name melodymatch.cc www.melodymatch.cc;
+    return 301 https://$host$request_uri;
+}
 
-    root /var/www/melodymatch;  # Vite's build output folder
+# HTTPS - Handle SSL traffic
+server {
+    listen 443 ssl;
+    server_name melodymatch.cc www.melodymatch.cc;
+
+    # SSL Certificate
+    ssl_certificate /etc/ssl/certs/certificate.crt;  
+    ssl_certificate_key /etc/ssl/private/private.key;  
+
+    # Root directory 
+    root /var/www/melodymatch;
     index index.html;
 
     # Enable Gzip compression
@@ -22,14 +34,14 @@ server {
         application/xml
         image/svg+xml;
 
-    # Serve static assets with cache
+    # Serve static assets with caching
     location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|otf)$ {
         expires 30d;
         access_log off;
         try_files $uri $uri/ =404;
     }
 
-    # Serve /images/ from public if needed
+    # Serve images from public folder if needed
     location /images/ {
         root /var/www/melodymatch/public;
         try_files $uri $uri/ =404;
@@ -37,9 +49,9 @@ server {
         access_log off;
     }
 
-    # API reverse proxy to Docker backend
+    # Reverse proxy for API (Docker backend)
     location /api/ {
-        proxy_pass http://localhost:5001;
+        proxy_pass http://localhost:5001;  # Port of your Docker Express backend
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -49,7 +61,7 @@ server {
         proxy_cache_bypass $http_upgrade;
     }
 
-    # All other routes -> index.html (for client-side routing)
+    # Handle client-side routing with React (for SPA)
     location / {
         try_files $uri /index.html;
     }

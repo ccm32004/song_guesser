@@ -83,6 +83,7 @@ async function reconnectRedis() {
   }
 }
 
+app.set('trust proxy', 1);
 //TODO: set cors policy to only allow the frontend domain in production
 app.use(express.static(__dirname + '/public'))
    .use(cookieParser())
@@ -97,15 +98,14 @@ app.use(express.static(__dirname + '/public'))
       secret: session_secret,
       resave: false,
       saveUninitialized: false,
-      cookie: { secure: false } 
-      // cookie: {
-      //   httpOnly: true,  // Cookie is HTTP-only (can't be accessed by JavaScript)
-      //   secure: process.env.NODE_ENV === 'production',  // Only send cookie over HTTPS in production
-      //   maxAge: 1000 * 60 * 60, // 1 hour expiration for the session cookie
-      // },
+      cookie: {
+        httpOnly: true,  // Cookie is HTTP-only (can't be accessed by JavaScript)
+        secure: process.env.NODE_ENV === 'production',  // Only send cookie over HTTPS in production
+        maxAge: 1000 * 60 * 60, // 1 hour expiration for the session cookie
+      },
    }))
    .use(json())
-   .use(limiter);
+   .use(limiter)
 
 app.use('/', userRoutes);
 app.use('/', songRoutes);

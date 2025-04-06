@@ -55,7 +55,7 @@ export const fetchUserProfile = async () => {
         'Authorization': `Bearer ${jwtToken}`,  
         'Content-Type': 'application/json',    
       },
-      // credentials: 'include',  // If you're using cookies or cross-origin authentication
+      credentials: 'include', 
     });
 
     if (!response.ok) {
@@ -88,7 +88,7 @@ export const fetchUserStats = async () => {
         'Authorization': `Bearer ${jwtToken}`,  
         'Content-Type': 'application/json',    
       },
-      // credentials: 'include',  // If you're using cookies or cross-origin authentication
+      credentials: 'include', 
     });
     
     if (!response.ok) {
