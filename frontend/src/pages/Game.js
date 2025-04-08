@@ -77,7 +77,6 @@ const Game = () => {
    //TODO: remove the functionality of the play button 
 
   function setProgressIndicator() {
-    setProgress(0);
     const id = setInterval(() => {
       setProgress((prevProgress) => {
         if (prevProgress >= 100) {
@@ -97,7 +96,6 @@ const Game = () => {
   //only run if the song preview url changes
   useEffect(() => {
     if (audioRef.current && songPreviewUrl && isTrackStarted & isPreviewUrlChanged) {
-
       if (intervalId) {
         clearInterval(intervalId);
       }
@@ -173,7 +171,7 @@ const Game = () => {
             setPlayCount((prevPlayCount) => prevPlayCount + 1);
             // Increment play count, ensures it updated based on most recent state value, rather than the version existing in the render
             //typically it is no applied immediately, rahter it is scheduled to applied in the next render (which is why it is one behind)
-
+            setProgress(0);
             setProgressIndicator();
           })
           .catch((error) => {
@@ -216,6 +214,7 @@ const Game = () => {
     if (normalizedInputTitle === normalizedSongTitle) {
       setLoadingMessage("Correct! Loading next song...");
       setIsLoadingNextSong(true); 
+      setProgress(0);
       
       setTimeout(async () => {
         await incrementCurrentStreak();
@@ -286,9 +285,8 @@ const Game = () => {
         : `Answer: \n${song.title}`;
 
     setLoadingMessage(loadingMessage);
-
     setIsLoadingNextSong(true); 
-
+    setProgress(0);
     
     setTimeout(async () => {
       setInputTitle(""); 
