@@ -84,7 +84,6 @@ async function reconnectRedis() {
 }
 
 app.set('trust proxy', 1);
-//TODO: set cors policy to only allow the frontend domain in production
 app.use(express.static(__dirname + '/public'))
    .use(cookieParser())
    .use(cors({
