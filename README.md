@@ -6,7 +6,7 @@ Built with **React, Express, Redis, MongoDB, and the Spotify Web API**, and depl
 
 ## Demo
 
-The original project was fully functional when developed. Since it relies on Spotify's API, some functionality may no longer work as originally implemented due to changes to Spotify's platform and API.
+The original project was fully functional at [melodymatch.cc](http://melodymatch.cc) when developed. Since it relies on Spotify's API, some functionality may no longer work as originally implemented due to changes to Spotify's platform and API.
 
 [▶️ Watch the project demo on Google Drive](https://drive.google.com/file/d/1yD0C4VbIHA02EhRi7FZhOS29t2YsCw3-/view?usp=sharing)
 
@@ -38,6 +38,8 @@ The original project was fully functional when developed. Since it relies on Spo
 - Docker
 - Nginx
 - Cloudflare
+
+
 
 ## Architecture
 
@@ -95,6 +97,8 @@ Authenticated users can view their Spotify profile and save their highest streak
 | `POST /api/update-high-score` | Update a user's high score                |
 
 
+
+
 ## Implementation Notes
 
 Spotify's Web API does not consistently provide `preview_url` for tracks. When a preview is unavailable through the API, MelodyMatch retrieves the track's Spotify embed page and extracts its `audioPreview.url`.
@@ -102,6 +106,8 @@ Spotify's Web API does not consistently provide `preview_url` for tracks. When a
 The application uses HTTP-only session cookies so authentication state is not exposed directly to client-side JavaScript.
 
 ## Running Locally
+
+
 
 ### Backend
 
@@ -149,6 +155,8 @@ cd frontend
 npm install
 npm start
 ```
+
+
 
 ## Deployment
 
